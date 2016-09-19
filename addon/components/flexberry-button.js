@@ -175,7 +175,17 @@ let FlexberryButtonComponent = Ember.Component.extend(
     @type Boolean
     @default false
   */
-  readonly: false
+  readonly: false,
+
+  actions: {
+    click(e) {
+      if (this.get('readonly')) {
+        e.stopPropagation();
+        return false;  
+      }
+    }
+  }
+
 });
 
 // Add component's CSS-class names as component's class static constants
