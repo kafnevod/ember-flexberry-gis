@@ -6,6 +6,7 @@ import Ember from 'ember';
 import LeafletOptionsMixin from '../mixins/leaflet-options';
 import LeafletPropertiesMixin from '../mixins/leaflet-properties';
 import LeafletEventsMixin from '../mixins/leaflet-events';
+import LeafletMapExtensionsMixin from '../mixins/leaflet-map-extensions';
 
 import layout from '../templates/components/flexberry-map';
 
@@ -44,7 +45,8 @@ const flexberryClassNames = {
 let FlexberryMapComponent = Ember.Component.extend(
   LeafletOptionsMixin,
   LeafletPropertiesMixin,
-  LeafletEventsMixin, {
+  LeafletEventsMixin,
+  LeafletMapExtensionsMixin, {
     /**
       Leaflet map.
 
@@ -185,75 +187,6 @@ let FlexberryMapComponent = Ember.Component.extend(
     layers: null,
 
     /**
-      Injects additional methods into initialized leaflet map.
-
-      @method _injectMapLoaderMethods
-      @param {<a href="http://leafletjs.com/reference-1.0.0.html#map">L.Map</a>} leafletMap initialized leaflet map.
-      @private
-    */
-    _injectMapLoaderMethods(leafletMap) {
-      let $mapLoader = this.$(`.${flexberryClassNames.loader}`);
-
-      // Sets map loader's content.
-      leafletMap.setLoaderContent = (content) => {
-        $mapLoader.text(content);
-      };
-
-      // Shows map loader.
-      leafletMap.showLoader = () => {
-        // Remember current handlers states & disable them,
-        // to disable dragging, zoom, keyboard events handling, etc.
-        leafletMap._handlers.forEach((handler) => {
-          handler._beforeLoaderState = handler.enabled();
-
-          if (handler._beforeLoaderState === true) {
-            handler.disable();
-          }
-        });
-
-        this.set('_isLoaderShown', true);
-      };
-
-      // Hides map loader.
-      leafletMap.hideLoader = () => {
-        this.set('_isLoaderShown', false);
-
-        // Restore handlers states,
-        // to restore dragging, zoom, keyboard events handling, etc.
-        leafletMap._handlers.forEach((handler) => {
-          if (handler._beforeLoaderState === true) {
-            handler.enable();
-          }
-        });
-      };
-
-      // Prevents DOM events from being triggered while map loader is shown.
-      // Call to L.DOMEvent.StopPropagation doesn't take an effect, so override map's '_fireDOMEvent' method.
-      let originalFireDOMEvent = leafletMap._fireDOMEvent;
-      leafletMap._fireDOMEvent = (...args) => {
-        if (this.get('_isLoaderShown')) {
-          return;
-        }
-
-        originalFireDOMEvent.apply(leafletMap, args);
-      };
-    },
-
-    /**
-      Removes injected additional methods from initialized leaflet map.
-
-      @method _removeMapLoaderMethods
-      @param {<a href="http://leafletjs.com/reference-1.0.0.html#map">L.Map</a>} leafletMap initialized leaflet map.
-      @private
-    */
-    _removeMapLoaderMethods(leafletMap) {
-      delete leafletMap.setLoaderContent;
-      delete leafletMap.showLoader;
-      delete leafletMap.hideLoader;
-      delete leafletMap._fireDOMEvent;
-    },
-
-    /**
       Initializes DOM-related component's properties.
     */
     didInsertElement() {
@@ -261,7 +194,33 @@ let FlexberryMapComponent = Ember.Component.extend(
 
       // Initialize leaflet map.
       let leafletMap = L.map(this.$()[0], this.get('options'));
-      this._injectMapLoaderMethods(leafletMap);
+      this.willInitLeafletMap(leafletMap);
+      this.initLeafletMap(leafletMap);
+    },
+
+    /**
+      Destroys DOM-related component's properties.
+    */
+    willDestroyElement() {
+      this._super(...arguments);
+
+      let leafletMap = this.get('_layer');
+      this.willDestroyLeafletMap(leafletMap);
+      this.destroyLeafletMap(leafletMap);
+    },
+
+    /**
+      Performs some initialization before leaflet map will be initialized.
+    */
+    willInitLeafletMap(leafletMap) {
+      this._super(...arguments);
+    },
+
+    /**
+      Initializes leaflet map related properties.
+    */
+    initLeafletMap(leafletMap) {
+      this._super(...arguments);
 
       this.set('_layer', leafletMap);
 
@@ -274,20 +233,27 @@ let FlexberryMapComponent = Ember.Component.extend(
     },
 
     /**
-      Destroys DOM-related component's properties.
+      Performs some clean up before leaflet map will be destroyed.
     */
-    willDestroyElement() {
+    willDestroyLeafletMap(leafletMap) {
+      this._super(...arguments);
+    },
+
+    /**
+      Destroys leaflet map.
+    */
+    destroyLeafletMap(leafletMap) {
       this._super(...arguments);
 
-      let leafletMap = this.get('_layer');
-      if (!Ember.isNone(leafletMap)) {
-        // Destroy leaflet map.
-        this._removeMapLoaderMethods(leafletMap);
-        leafletMap.remove();
-        this.set('_layer', null);
-
-        this.sendAction('leafletDestroy');
+      if (Ember.isNone(leafletMap)) {
+        return;
       }
+
+      // Destroy leaflet map.
+      leafletMap.remove();
+      this.set('_layer', null);
+
+      this.sendAction('leafletDestroy');
     }
 
     /**
