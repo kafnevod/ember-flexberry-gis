@@ -6,7 +6,8 @@ import Ember from 'ember';
 import LeafletOptionsMixin from '../mixins/leaflet-options';
 import LeafletPropertiesMixin from '../mixins/leaflet-properties';
 import LeafletEventsMixin from '../mixins/leaflet-events';
-import LeafletMapExtensionsMixin from '../mixins/leaflet-map-extensions';
+import LeafletMapInteractionMixin from '../mixins/leaflet-map/interaction';
+import LeafletMapLoaderMixin from '../mixins/leaflet-map/loader';
 
 import layout from '../templates/components/flexberry-map';
 
@@ -17,8 +18,6 @@ import layout from '../templates/components/flexberry-map';
   @property {Object} flexberryClassNames
   @property {String} flexberryClassNames.prefix Component's CSS-class names prefix ('flexberry-map').
   @property {String} flexberryClassNames.wrapper Component's wrapping <div> CSS-class name ('flexberry-map').
-  @property {String} flexberryClassNames.loader Component's loader CSS-class name ('flexberry-map-loader').
-  @property {String} flexberryClassNames.loaderDimmer Component's loader's dimmer CSS-class name ('flexberry-map-loader-dimmer').
   @readonly
   @static
 
@@ -27,9 +26,7 @@ import layout from '../templates/components/flexberry-map';
 const flexberryClassNamesPrefix = 'flexberry-map';
 const flexberryClassNames = {
   prefix: flexberryClassNamesPrefix,
-  wrapper: flexberryClassNamesPrefix,
-  loader: flexberryClassNamesPrefix + '-loader',
-  loaderDimmer: flexberryClassNamesPrefix + '-loader-dimmer'
+  wrapper: flexberryClassNamesPrefix
 };
 
 /**
@@ -41,12 +38,16 @@ const flexberryClassNames = {
   @uses LeafletOptionsMixin
   @uses LeafletPropertiesMixin
   @uses LeafletEventsMixin
+  @uses LeafletMapLoaderMixin
  */
 let FlexberryMapComponent = Ember.Component.extend(
   LeafletOptionsMixin,
   LeafletPropertiesMixin,
   LeafletEventsMixin,
-  LeafletMapExtensionsMixin, {
+
+  // Mixins containing leaflet map extensions (order is important).
+  LeafletMapInteractionMixin,
+  LeafletMapLoaderMixin, {
     /**
       Leaflet map.
 
@@ -56,17 +57,6 @@ let FlexberryMapComponent = Ember.Component.extend(
       @private
     */
     _layer: null,
-
-    /**
-      Flag: indicates whether map loader is shown or not.
-      Use leaflet map's 'showLoader', 'hideLoader' methods to set this property value.
-
-      @property _isLoaderShown
-      @type Boolean
-      @default false
-      @private
-    */
-    _isLoaderShown: false,
 
     /**
       Reference to component's template.
@@ -213,6 +203,9 @@ let FlexberryMapComponent = Ember.Component.extend(
       Performs some initialization before leaflet map will be initialized.
     */
     willInitLeafletMap(leafletMap) {
+      leafletMap.flexberryMap = {};
+      window.leafletMap = leafletMap;
+
       this._super(...arguments);
     },
 
@@ -237,6 +230,9 @@ let FlexberryMapComponent = Ember.Component.extend(
     */
     willDestroyLeafletMap(leafletMap) {
       this._super(...arguments);
+
+      delete leafletMap.flexberryMap;
+      delete window.leafletMap;
     },
 
     /**
@@ -245,11 +241,6 @@ let FlexberryMapComponent = Ember.Component.extend(
     destroyLeafletMap(leafletMap) {
       this._super(...arguments);
 
-      if (Ember.isNone(leafletMap)) {
-        return;
-      }
-
-      // Destroy leaflet map.
       leafletMap.remove();
       this.set('_layer', null);
 

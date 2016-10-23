@@ -508,8 +508,7 @@ export default RectangleMapTool.extend({
     let popupMaxHeight = mapSize.y * 0.5;
 
     // Hide map loader.
-    leafletMap.setLoaderContent('');
-    leafletMap.hideLoader();
+    leafletMap.flexberryMap.loader.hide({ content: '' });
 
     // Finally show popup.
     let popup = L.popup({
@@ -617,8 +616,7 @@ export default RectangleMapTool.extend({
     // Show map loader.
     let i18n = this.get('i18n');
     let leafletMap = this.get('leafletMap');
-    leafletMap.setLoaderContent(i18n.t('map-tools.identify.loader-message'));
-    leafletMap.showLoader();
+    leafletMap.flexberryMap.loader.show({ content: i18n.t('map-tools.identify.loader-message') });
 
     // Start identification.
     this._startIdentification({
