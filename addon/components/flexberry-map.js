@@ -6,8 +6,9 @@ import Ember from 'ember';
 import LeafletOptionsMixin from '../mixins/leaflet-options';
 import LeafletPropertiesMixin from '../mixins/leaflet-properties';
 import LeafletEventsMixin from '../mixins/leaflet-events';
-import LeafletMapInteractionMixin from '../mixins/leaflet-map/interaction';
-import LeafletMapLoaderMixin from '../mixins/leaflet-map/loader';
+import LeafletMapInteractionMixin from '../mixins/leaflet-map/map-interaction';
+import LeafletMapLoaderMixin from '../mixins/leaflet-map/map-loader';
+import LeafletMapToolsMixin from '../mixins/leaflet-map/map-tools';
 
 import layout from '../templates/components/flexberry-map';
 
@@ -39,6 +40,7 @@ const flexberryClassNames = {
   @uses LeafletPropertiesMixin
   @uses LeafletEventsMixin
   @uses LeafletMapLoaderMixin
+  @uses LeafletMapToolsMixin
  */
 let FlexberryMapComponent = Ember.Component.extend(
   LeafletOptionsMixin,
@@ -47,7 +49,8 @@ let FlexberryMapComponent = Ember.Component.extend(
 
   // Mixins containing leaflet map extensions (order is important).
   LeafletMapInteractionMixin,
-  LeafletMapLoaderMixin, {
+  LeafletMapLoaderMixin,
+  LeafletMapToolsMixin, {
     /**
       Leaflet map.
 
