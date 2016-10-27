@@ -48,7 +48,10 @@ export default Ember.Mixin.create({
       .addClass('ui text loader')
       .appendTo($mapContainer);
 
+    // Reference to flexberryMap.interaction namespace.
     let mapInteraction = leafletMap.flexberryMap.interaction;
+
+    // Define flexberryMap.loader namespace & related methods & properties.
     let loader = leafletMap.flexberryMap.loader = {
       // Loader's markup element.
       loaderElement: $loader,
