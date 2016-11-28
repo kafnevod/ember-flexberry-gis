@@ -256,20 +256,25 @@ test('Component invokes actions with settings wms', function(assert) {
 
   //$dialogContent.scrollTop(500);
 
-  $textBoxsInContent[0].click();
-  $textBoxsInContent[0].value = 'Test TextBox 1';
+  Ember.$($textBoxsInContent[0]).val('Test TextBox 1');
+  Ember.$($textBoxsInContent[0]).change();
+
   $textBoxsInContent[1].value = 'Test TextBox 2';
   $textBoxsInContent[2].value = 'Test TextBox 3';
   $textBoxsInContent[3].value = 'Test TextBox 4';
-  $textBoxsInContent[4].value = 'Test TextBox 5';
-  $textAreaInContent[0].value = 'Test TextArea 1';
+
+  Ember.$($textBoxsInContent[4]).val('Test TextBox 5');
+  Ember.$($textBoxsInContent[4]).change();
+
+  $textAreaInContent.val('Test TextArea 1');
+  $textAreaInContent.change();
+
   $divWithCheckBox.click();
 
   let $dialogAction = $component.children('div.flexberry-dialog-toolbar.actions');
   let $approveButton = $dialogAction.children('label.flexberry-dialog-approve-button.approve.positive.ember-view.flexberry-button.ui.button');
 
   $approveButton.click();
-
 
 
   //let asdasd = latestEventObjects.approveValue;
