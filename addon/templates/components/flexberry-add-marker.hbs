@@ -1,1 +1,28 @@
+<div class="ui grid">
+  <div class="sixteen wide column">
+    <strong>Тип знака:</strong>
+    <br>
+    {{flexberry-dropdown
+      items=signTypes
+      value=model.enumeration
+      placeholder=placeholder
+      readonly=readonly
+      class=dropDownClass}}
+  </div>
+  <div class="twelve wide column">
+    <strong>Вид знака:</strong>
+    <br>
+    {{flexberry-dropdown
+      items=signViews
+      value=model.enumeration
+      placeholder=placeholder
+      readonly=readonly
+      class=dropDownClass}}
+    <br>
+    <strong>Основное изображение:</strong>
+    <br><br>
+    <strong>Изображение тени:</strong>
+  </div>
+  <div class="four wide column">тут будет канва</div>
+</div>
 {{yield}}
