@@ -50,11 +50,17 @@
                       maxlength=maxlength
                     }}
                   </div>
+                  {{flexberry-button
+                    class=applyImageClass
+                    iconClass=class
+                    caption=(t "components.flexberry-add-marker.apply")
+                    click=(action "applyImageClick")
+                  }}
                 </div>
               </div>
             </div>
             <div class="four wide column">
-                <img class="ui medium bordered image" src="https://semantic-ui.com/images/wireframe/white-image.png">
+                <canvas id="imageCanvas" width="200px" height="200px"></canvas>
             </div>
           </div>
         </div>
@@ -91,11 +97,17 @@
                       maxlength=maxlength
                     }}
                   </div>
+                  {{flexberry-button
+                    class=applyImageClass
+                    iconClass=class
+                    caption=(t "components.flexberry-add-marker.apply")
+                    click=(action "applyShadowClick")
+                  }}
                 </div>
               </div>
             </div>
             <div class="four wide column">
-                <img class="ui medium bordered image" src="https://semantic-ui.com/images/wireframe/white-image.png">
+                <canvas id="shadowCanvas"></canvas>
             </div>
           </div>
         </div>

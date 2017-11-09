@@ -120,7 +120,9 @@ export default {
 
       'width': 'Ширина',
 
-      'height': 'Высота'
+      'height': 'Высота',
+
+      'apply': 'Применить'
     },
   },
 
