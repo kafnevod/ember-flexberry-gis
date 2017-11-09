@@ -6,7 +6,19 @@ export default Ember.Component.extend({
 
   dropDownClass: 'fluid',
 
-  signTypes: ['адин', 'два', 'пять'],
+  placemarkTypes: ['адин', 'два', 'пять'],
 
-  signViews: ['два', 'три']
+  placemarkViews: ['два', 'три'],
+
+  imageURL: undefined,
+
+  shadowURL: undefined,
+
+  imageHeight: 8,
+
+  imageWidth: 8,
+
+  shadowHeight: 8,
+
+  shadowWidth: 8
 });

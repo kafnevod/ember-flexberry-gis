@@ -1,28 +1,106 @@
 <div class="ui grid">
   <div class="sixteen wide column">
-    <strong>Тип знака:</strong>
-    <br>
+    <h4>{{t "components.flexberry-add-marker.placemark-type"}}</h4>
     {{flexberry-dropdown
-      items=signTypes
+      items=placemarkTypes
       value=model.enumeration
       placeholder=placeholder
       readonly=readonly
       class=dropDownClass}}
   </div>
   <div class="twelve wide column">
-    <strong>Вид знака:</strong>
-    <br>
-    {{flexberry-dropdown
-      items=signViews
-      value=model.enumeration
-      placeholder=placeholder
-      readonly=readonly
-      class=dropDownClass}}
-    <br>
-    <strong>Основное изображение:</strong>
-    <br><br>
-    <strong>Изображение тени:</strong>
+      <h4>{{t "components.flexberry-add-marker.placemark-view"}}</h4>
+      {{flexberry-dropdown
+        items=placemarkViews
+        value=model.enumeration
+        placeholder=placeholder
+        readonly=readonly
+        class=dropDownClass}}
+      <div class="ui segments">
+        <div class="ui segment">
+          <div class="ui grid">
+            <div class="twelve wide column">
+              {{flexberry-field
+                value=imageURL
+                label=(t "components.flexberry-add-marker.main-image")
+                placeholder='URL'
+                readonly=readonly
+                type=type
+                maxlength=maxlength
+              }}
+              <div class="ui grid">
+                <div class="two column row">
+                  <div class="column">
+                    {{flexberry-field
+                      value=imageWidth
+                      label=(t "components.flexberry-add-marker.width")
+                      placeholder=placeholder
+                      readonly=readonly
+                      type="number"
+                      maxlength=maxlength
+                    }}
+                  </div>
+                  <div class="column">
+                    {{flexberry-field
+                      value=imageHeight
+                      label=(t "components.flexberry-add-marker.height")
+                      placeholder=placeholder
+                      readonly=readonly
+                      type="number"
+                      maxlength=maxlength
+                    }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="four wide column">
+                <img class="ui medium bordered image" src="https://semantic-ui.com/images/wireframe/white-image.png">
+            </div>
+          </div>
+        </div>
+        <div class="ui segment">
+          <div class="ui grid">
+            <div class="twelve wide column">
+              {{flexberry-field
+                value=shadowURL
+                label=(t "components.flexberry-add-marker.shadow-image")
+                placeholder='URL'
+                readonly=readonly
+                type=type
+                maxlength=maxlength
+              }}
+              <div class="ui grid">
+                <div class="two column row">
+                  <div class="column">
+                    {{flexberry-field
+                      value=shadowWidth
+                      label=(t "components.flexberry-add-marker.width")
+                      placeholder=placeholder
+                      readonly=readonly
+                      type="number"
+                      maxlength=maxlength
+                    }}
+                  </div>
+                  <div class="column">
+                    {{flexberry-field
+                      value=shadowHeight
+                      label=(t "components.flexberry-add-marker.height")
+                      placeholder=placeholder
+                      readonly=readonly
+                      type="number"
+                      maxlength=maxlength
+                    }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="four wide column">
+                <img class="ui medium bordered image" src="https://semantic-ui.com/images/wireframe/white-image.png">
+            </div>
+          </div>
+        </div>
+      </div>
+
   </div>
   <div class="four wide column">тут будет канва</div>
 </div>
-{{yield}}

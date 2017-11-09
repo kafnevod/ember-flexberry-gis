@@ -107,7 +107,21 @@ export default {
 
     'map-commands': MapCommandsComponents,
 
-    'flexberry-mapinfo': FlexberryMapInfoComponent
+    'flexberry-mapinfo': FlexberryMapInfoComponent,
+
+    'flexberry-add-marker': {
+      'placemark-type': 'Тип метки',
+
+      'placemark-view': 'Вид метки',
+
+      'main-image': 'Основное изображение',
+
+      'shadow-image': 'Изображение тени',
+
+      'width': 'Ширина',
+
+      'height': 'Высота'
+    },
   },
 
   'map-tools': {
