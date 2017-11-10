@@ -4,12 +4,6 @@ import layout from '../templates/components/flexberry-add-marker';
 export default Ember.Component.extend({
   layout,
 
-  dropDownClass: 'fluid',
-
-  placemarkTypes: ['Фигурами', 'Маркерами'],
-
-  placemarkViews: ['два', 'три'],
-
   imageURL: undefined,
 
   shadowURL: undefined,
