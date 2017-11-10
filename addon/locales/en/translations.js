@@ -118,11 +118,13 @@ export default {
 
       'shadow-image': 'Shadow image',
 
-      'width': 'Width',
+      'width': 'Width, px',
 
-      'height': 'Height',
+      'height': 'Height, px',
 
-      'apply': 'Apply'
+      'apply': 'Apply',
+
+      'get-size': 'Get image size'
     },
   },
 

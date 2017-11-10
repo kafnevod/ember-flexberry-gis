@@ -6,7 +6,7 @@ export default Ember.Component.extend({
 
   dropDownClass: 'fluid',
 
-  placemarkTypes: ['адин', 'два', 'пять'],
+  placemarkTypes: ['Фигурами', 'Маркерами'],
 
   placemarkViews: ['два', 'три'],
 
@@ -46,7 +46,59 @@ export default Ember.Component.extend({
     }
   })),
 
+  _redrawResult() {
+    let resultCanvas = document.getElementById('resultCanvas');
+    let resultCtx = resultCanvas.getContext('2d');
+    resultCtx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+
+    if (!Ember.isNone(this.get('imageURL'))) {
+      let resultImg = new Image();
+      resultImg.src = this.get('imageURL');
+      resultImg.onload =  () => {
+        resultCtx.drawImage(
+          resultImg,
+          (200 / 2 - this.get('imageWidth') / 2),
+          (200 / 2 - this.get('imageHeight') / 2),
+          this.get('imageWidth'),
+          this.get('imageHeight')
+        );
+      };
+    }
+
+    if (!Ember.isNone(this.get('shadowURL'))) {
+      let resultImg = new Image();
+      resultImg.src = this.get('shadowURL');
+      resultImg.onload =  () => {
+        resultCtx.drawImage(
+          resultImg,
+          (200 / 2 - this.get('shadowWidth') / 2),
+          (200 / 2 - this.get('shadowHeight') / 2),
+          this.get('shadowWidth'),
+          this.get('shadowHeight')
+        );
+      };
+    }
+  },
+
   actions: {
+    getImageSizeClick() {
+      let img = new Image();
+      img.src = this.get('imageURL');
+      img.onload =  () => {
+        this.set('imageHeight', img.height);
+        this.set('imageWidth', img.width);
+      };
+    },
+
+    getShadowSizeClick() {
+      let img = new Image();
+      img.src = this.get('shadowURL');
+      img.onload =  () => {
+        this.set('shadowHeight', img.height);
+        this.set('shadowWidth', img.width);
+      };
+    },
+
     applyImageClick() {
       let canvas = document.getElementById('imageCanvas');
       let ctx = canvas.getContext('2d');
@@ -62,6 +114,8 @@ export default Ember.Component.extend({
           this.get('imageHeight')
         );
       };
+
+      this._redrawResult();
     },
 
     applyShadowClick() {
@@ -79,6 +133,8 @@ export default Ember.Component.extend({
           this.get('shadowHeight')
         );
       };
+
+      this._redrawResult();
     }
   }
 });

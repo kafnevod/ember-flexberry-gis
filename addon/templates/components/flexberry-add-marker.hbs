@@ -52,6 +52,12 @@
                   </div>
                   {{flexberry-button
                     class=applyImageClass
+                    iconClass=class
+                    caption=(t "components.flexberry-add-marker.get-size")
+                    click=(action "getImageSizeClick")
+                  }}
+                  {{flexberry-button
+                    class=applyImageClass
                     readonly=applyImageReadonly
                     iconClass=class
                     caption=(t "components.flexberry-add-marker.apply")
@@ -61,7 +67,7 @@
               </div>
             </div>
             <div class="four wide column">
-                <canvas id="imageCanvas" width="200px" height="200px"></canvas>
+              <canvas id="imageCanvas" width="200px" height="200px"></canvas>
             </div>
           </div>
         </div>
@@ -99,6 +105,12 @@
                     }}
                   </div>
                   {{flexberry-button
+                    class=applyImageClass
+                    iconClass=class
+                    caption=(t "components.flexberry-add-marker.get-size")
+                    click=(action "getShadowSizeClick")
+                  }}
+                  {{flexberry-button
                     class=applyShadowClass
                     readonly=applyShadowReadonly
                     iconClass=class
@@ -109,12 +121,14 @@
               </div>
             </div>
             <div class="four wide column">
-                <canvas id="shadowCanvas"></canvas>
+                <canvas id="shadowCanvas"  width="200px" height="200px"></canvas>
             </div>
           </div>
         </div>
       </div>
 
   </div>
-  <div class="four wide column">тут будет канва</div>
+  <div class="four wide column">
+    <canvas id="resultCanvas"  width="200px" height="200px"></canvas>
+  </div>
 </div>
