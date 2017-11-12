@@ -6,7 +6,11 @@ export default Ember.Component.extend({
 
   imageURL: undefined,
 
+  imageInputClass: undefined,
+
   shadowURL: undefined,
+
+  shadowInputClass: undefined,
 
   imageHeight: 8,
 
@@ -40,6 +44,13 @@ export default Ember.Component.extend({
     }
   })),
 
+  shadowURLDidChange:  Ember.on('init', Ember.observer('shadowURL', function() {
+    this.set('shadowInputClass', undefined);
+  })),
+
+  imageURLDidChange:  Ember.on('init', Ember.observer('imageURL', function() {
+    this.set('imageInputClass', undefined);
+  })),
   _redrawResult() {
     let resultCanvas = document.getElementById('resultCanvas');
     let resultCtx = resultCanvas.getContext('2d');
@@ -100,6 +111,12 @@ export default Ember.Component.extend({
       let img = new Image();
       img.src = this.get('imageURL');
       img.onload =  () => {
+
+        if (img.width > 200 || img.height > 200) {
+          this.set('imageInputClass', 'input error');
+          return;
+        }
+
         ctx.drawImage(
           img,
           (200 / 2 - this.get('imageWidth') / 2),
@@ -107,9 +124,9 @@ export default Ember.Component.extend({
           this.get('imageWidth'),
           this.get('imageHeight')
         );
+        this._redrawResult();
       };
 
-      this._redrawResult();
     },
 
     applyShadowClick() {
@@ -119,6 +136,11 @@ export default Ember.Component.extend({
       let img = new Image();
       img.src = this.get('shadowURL');
       img.onload =  () => {
+        if (img.width > 200 || img.height > 200) {
+          this.set('shadowInputClass', 'input error');
+          return;
+        }
+
         ctx.drawImage(
           img,
           (200 / 2 - this.get('shadowWidth') / 2),
@@ -126,9 +148,8 @@ export default Ember.Component.extend({
           this.get('shadowWidth'),
           this.get('shadowHeight')
         );
+        this._redrawResult();
       };
-
-      this._redrawResult();
     }
   }
 });
