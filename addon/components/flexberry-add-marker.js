@@ -24,6 +24,8 @@ export default Ember.Component.extend({
 
   applyShadowReadonly: false,
 
+  canvasSize: 200,
+
   init() {
     this._super(...arguments);
   },
@@ -52,6 +54,8 @@ export default Ember.Component.extend({
     this.set('imageInputClass', undefined);
   })),
   _redrawResult() {
+    let canvasSize = this.get('canvasSize');
+
     let resultCanvas = document.getElementById('resultCanvas');
     let resultCtx = resultCanvas.getContext('2d');
     resultCtx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
@@ -62,8 +66,8 @@ export default Ember.Component.extend({
       resultImg.onload =  () => {
         resultCtx.drawImage(
           resultImg,
-          (200 / 2 - this.get('imageWidth') / 2),
-          (200 / 2 - this.get('imageHeight') / 2),
+          (canvasSize / 2 - this.get('imageWidth') / 2),
+          (canvasSize / 2 - this.get('imageHeight') / 2),
           this.get('imageWidth'),
           this.get('imageHeight')
         );
@@ -76,8 +80,8 @@ export default Ember.Component.extend({
       resultImg.onload =  () => {
         resultCtx.drawImage(
           resultImg,
-          (200 / 2 - this.get('shadowWidth') / 2),
-          (200 / 2 - this.get('shadowHeight') / 2),
+          (canvasSize / 2 - this.get('shadowWidth') / 2),
+          (canvasSize / 2 - this.get('shadowHeight') / 2),
           this.get('shadowWidth'),
           this.get('shadowHeight')
         );
@@ -107,23 +111,61 @@ export default Ember.Component.extend({
     applyImageClick() {
       let canvas = document.getElementById('imageCanvas');
       let ctx = canvas.getContext('2d');
+      let canvasSize = this.get('canvasSize');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       let img = new Image();
       img.src = this.get('imageURL');
       img.onload =  () => {
 
-        if (img.width > 200 || img.height > 200) {
+        if (img.width > canvasSize || img.height > canvasSize) {
           this.set('imageInputClass', 'input error');
           return;
         }
 
+        let newWidth;
+        let newHeight;
+        if (img.width > img.height) {
+          newWidth = canvasSize;
+          newHeight = canvasSize * img.height / img.width;
+        } else {
+          newHeight = canvasSize;
+          newWidth = canvasSize * img.width / img.height;
+        }
+
+        let startX = (canvasSize / 2 - newWidth / 2);
+        let startY = (canvasSize / 2 - newHeight / 2);
+
         ctx.drawImage(
           img,
-          (200 / 2 - this.get('imageWidth') / 2),
-          (200 / 2 - this.get('imageHeight') / 2),
-          this.get('imageWidth'),
-          this.get('imageHeight')
+          startX,
+          startY,
+          newWidth,
+          newHeight
         );
+
+        ctx.strokeStyle = '#000000';
+        let i = startX;
+        let step = Math.round(newWidth / img.width);
+
+        ctx.moveTo(startX, startY);
+
+        while (i + step <= newWidth + startX) {
+          console.log('i:' + i);
+          ctx.moveTo(i, startY);
+          ctx.lineTo(i, newHeight + startY);
+          i += step;
+        }
+
+        i = startY;
+        console.log('горизонтали пошли');
+        while (i + step <= newHeight + startY) {
+          console.log('i:' + i);
+          ctx.moveTo(startX, i);
+          ctx.lineTo(newWidth + startX, i);
+          i += step;
+        }
+
+        ctx.stroke();
         this._redrawResult();
       };
 
@@ -131,20 +173,22 @@ export default Ember.Component.extend({
 
     applyShadowClick() {
       let canvas = document.getElementById('shadowCanvas');
+      let canvasSize = this.get('canvasSize');
       let ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       let img = new Image();
       img.src = this.get('shadowURL');
       img.onload =  () => {
-        if (img.width > 200 || img.height > 200) {
-          this.set('shadowInputClass', 'input error');
+
+        if (img.width > canvasSize || img.height > canvasSize) {
+          this.set('shadInputClass', 'input error');
           return;
         }
 
         ctx.drawImage(
           img,
-          (200 / 2 - this.get('shadowWidth') / 2),
-          (200 / 2 - this.get('shadowHeight') / 2),
+          (canvasSize / 2 - this.get('shadowWidth') / 2),
+          (canvasSize / 2 - this.get('shadowHeight') / 2),
           this.get('shadowWidth'),
           this.get('shadowHeight')
         );
