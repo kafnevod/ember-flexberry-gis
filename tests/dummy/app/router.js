@@ -24,6 +24,7 @@ Router.map(function() {
   this.route('components-examples/flexberry-boundingbox/settings-example');
   this.route('geojson-map');
   this.route('kml-map');
+  this.route('gradient-map');
 });
 
 export default Router;

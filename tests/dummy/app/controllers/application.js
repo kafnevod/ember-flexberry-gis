@@ -239,7 +239,14 @@ export default Ember.Controller.extend({
           caption: i18n.t('forms.application.sitemap.components-examples.kml-layer.caption'),
           title: i18n.t('forms.application.sitemap.components-examples.kml-layer.title'),
           children: null
-        }]
+        },
+        {
+          link: 'gradient-map',
+          caption: i18n.t('forms.application.sitemap.components-examples.gradient-map.caption'),
+          title: i18n.t('forms.application.sitemap.components-examples.gradient-map.title'),
+          children: null
+        }
+      ]
       }]
     };
   })

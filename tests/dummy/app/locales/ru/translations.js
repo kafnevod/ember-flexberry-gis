@@ -104,6 +104,10 @@ Ember.$.extend(true, translations, {
           'kml-layer': {
             'caption': 'kml-layer',
             'title': 'Пример работы слоя KML'
+          },
+          'gradient-map': {
+            'caption': 'gradients',
+            'title': 'Пример компонента градиентов'
           }
         }
       }

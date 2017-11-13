@@ -1,0 +1,22 @@
+<div class="five wide column">
+  {{flexberry-colorpicker
+    value=_captionFontColor1
+    change=(action "onCaptionFontColorChange1")
+  }}
+</div>
+<div class="five wide column">
+  {{flexberry-colorpicker
+    value=_captionFontColor2
+    change=(action "onCaptionFontColorChange2")
+  }}
+</div>
+<div class="ui icon fluid buttons">
+  {{flexberry-button
+    caption="Сформировать градиент"
+    class="fluid"
+    click=(action "onClickCanvas")
+  }}
+</div>
+
+<canvas class="myCanvas" width="300" height="150" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
