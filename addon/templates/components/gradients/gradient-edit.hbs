@@ -1,22 +1,26 @@
-<div class="five wide column">
-  {{flexberry-colorpicker
-    value=_captionFontColor1
-    change=(action "onCaptionFontColorChange1")
-  }}
+<div class="ui centered grid">
+  <div class="six wide column">
+    <div class="field">
+      <label>
+        {{t "components.gradient-edit.gradientColorStart"}}
+      </label>
+      {{flexberry-colorpicker
+        value=_gradientColorStart
+        change=(action "onGradientColorStartChange")
+      }}
+    </div>
+    <div class="field">
+      <label>
+        {{t "components.gradient-edit.gradientColorEnd"}}
+      </label>
+      {{flexberry-colorpicker
+        value=_gradientColorEnd
+        change=(action "onGradientColorEndChange")
+      }}
+    </div>
+  </div>
+  <div class="three wide column">
+    <canvas class="myCanvas" >
+    </canvas>
+  </div>
 </div>
-<div class="five wide column">
-  {{flexberry-colorpicker
-    value=_captionFontColor2
-    change=(action "onCaptionFontColorChange2")
-  }}
-</div>
-<div class="ui icon fluid buttons">
-  {{flexberry-button
-    caption="Сформировать градиент"
-    class="fluid"
-    click=(action "onClickCanvas")
-  }}
-</div>
-
-<canvas class="myCanvas" width="300" height="150" style="border:1px solid #d3d3d3;">
-Your browser does not support the HTML5 canvas tag.</canvas>

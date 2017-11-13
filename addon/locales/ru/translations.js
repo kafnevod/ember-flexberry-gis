@@ -104,6 +104,11 @@ export default {
       'opacity': 'Видимость'
     },
 
+    'gradient-edit':{
+      'gradientColorStart': 'Начальный цвет градиента',
+      'gradientColorEnd': 'Конечный цвет градиента'
+    },
+
     'flexberry-maptoolbar': {},
 
     'map-tools': MapToolsComponents,
