@@ -16,8 +16,6 @@ export default Ember.Component.extend({
 
   imageInputClass: undefined,
 
-  imageTableCellStep: undefined,
-
   applyImageReadonly: false,
 
   shadowURL: undefined,
@@ -30,11 +28,13 @@ export default Ember.Component.extend({
 
   shadowInputClass: undefined,
 
-  shadowTableStep: undefined,
-
   applyShadowReadonly: false,
 
-  maxSize: 200,
+  imageTableCells: undefined,
+
+  shadowTableCells: undefined,
+
+  cellSize: 10,
 
   init() {
     this._super(...arguments);
@@ -62,20 +62,30 @@ export default Ember.Component.extend({
           return;
         }
 
-        let oldWidth = img.width;
-        if (img.width > img.height) {
-          img.height = maxSize * img.height / img.width;
-          img.width = maxSize;
-        } else {
-          img.width = maxSize * img.width / img.height;
-          img.height = maxSize;
-        }
+        img.width = img.width * this.get('cellSize');
+        img.height = img.height * this.get('cellSize');
 
         this.set('imageToShow', img);
         this.set('imageHeight', img.height);
         this.set('imageWidth', img.width);
-        this.set('imageTableCellStep', Math.round(img.width / oldWidth));
+
+        let cells = [];
+        for (let i = 0; i <= img.height / this.get('cellSize'); i += 1) {
+          let row = [];
+          for (let j = 0; j <= img.width / this.get('cellSize'); j += 1) {
+            row.push('1');
+          }
+
+          cells.push(row);
+        }
+
+        this.set('imageTableCells', cells);
       };
+
+    },
+
+    test(e) {
+      console.log(e);
     },
 
     applyShadowClick() {
@@ -88,19 +98,24 @@ export default Ember.Component.extend({
           return;
         }
 
-        let oldWidth = img.width;
-        if (img.width > img.height) {
-          img.height = maxSize * img.height / img.width;
-          img.width = maxSize;
-        } else {
-          img.width = maxSize * img.width / img.height;
-          img.height = maxSize;
-        }
+        img.width = img.width * this.get('cellSize');
+        img.height = img.height * this.get('cellSize');
 
         this.set('shadowToShow', img);
         this.set('shadowHeight', img.height);
         this.set('shadowWidth', img.width);
-        this.set('shadowTableCellStep', Math.round(img.width / oldWidth));
+
+        let cells = [];
+        for (let i = 0; i <= img.height / this.get('cellSize'); i += 1) {
+          let row = [];
+          for (let j = 0; j <= img.width / this.get('cellSize'); j += 1) {
+            row.push('1');
+          }
+
+          cells.push(row);
+        }
+
+        this.set('shadowTableCells', cells);
       };
     }
   }
