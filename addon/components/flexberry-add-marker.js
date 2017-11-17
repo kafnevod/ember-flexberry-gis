@@ -4,47 +4,41 @@ import layout from '../templates/components/flexberry-add-marker';
 export default Ember.Component.extend({
   layout,
 
+  classNames: ['flexberry-add-marker'],
+
   imageURL: undefined,
+
+  imageToShow: undefined,
+
+  imageWidth: undefined,
+
+  imageHeight: undefined,
 
   imageInputClass: undefined,
 
-  shadowURL: undefined,
-
-  shadowInputClass: undefined,
-
-  imageHeight: 8,
-
-  imageWidth: 8,
-
-  shadowHeight: 8,
-
-  shadowWidth: 8,
+  imageTableCellStep: undefined,
 
   applyImageReadonly: false,
 
+  shadowURL: undefined,
+
+  shadowToShow: undefined,
+
+  shadowWidth: undefined,
+
+  shadowHeight: undefined,
+
+  shadowInputClass: undefined,
+
+  shadowTableStep: undefined,
+
   applyShadowReadonly: false,
 
-  canvasSize: 200,
+  maxSize: 200,
 
   init() {
     this._super(...arguments);
   },
-
-  shadowSizesDidChange:  Ember.on('init', Ember.observer('shadowHeight', 'shadowWidth', function() {
-    if (this.get('shadowHeight') <= 0 || this.get('shadowWidth') <= 0) {
-      this.set('applyShadowReadonly', true);
-    } else {
-      this.set('applyShadowReadonly', false);
-    }
-  })),
-
-  imageSizesDidChange:  Ember.on('init', Ember.observer('imageHeight', 'imageWidth', function() {
-    if (this.get('imageHeight') <= 0 || this.get('imageWidth') <= 0) {
-      this.set('applyImageReadonly', true);
-    } else {
-      this.set('applyImageReadonly', false);
-    }
-  })),
 
   shadowURLDidChange:  Ember.on('init', Ember.observer('shadowURL', function() {
     this.set('shadowInputClass', undefined);
@@ -54,145 +48,59 @@ export default Ember.Component.extend({
     this.set('imageInputClass', undefined);
   })),
   _redrawResult() {
-    let canvasSize = this.get('canvasSize');
 
-    let resultCanvas = document.getElementById('resultCanvas');
-    let resultCtx = resultCanvas.getContext('2d');
-    resultCtx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
-
-    if (!Ember.isNone(this.get('imageURL'))) {
-      let resultImg = new Image();
-      resultImg.src = this.get('imageURL');
-      resultImg.onload =  () => {
-        resultCtx.drawImage(
-          resultImg,
-          (canvasSize / 2 - this.get('imageWidth') / 2),
-          (canvasSize / 2 - this.get('imageHeight') / 2),
-          this.get('imageWidth'),
-          this.get('imageHeight')
-        );
-      };
-    }
-
-    if (!Ember.isNone(this.get('shadowURL'))) {
-      let resultImg = new Image();
-      resultImg.src = this.get('shadowURL');
-      resultImg.onload =  () => {
-        resultCtx.drawImage(
-          resultImg,
-          (canvasSize / 2 - this.get('shadowWidth') / 2),
-          (canvasSize / 2 - this.get('shadowHeight') / 2),
-          this.get('shadowWidth'),
-          this.get('shadowHeight')
-        );
-      };
-    }
   },
 
   actions: {
-    getImageSizeClick() {
-      let img = new Image();
-      img.src = this.get('imageURL');
-      img.onload =  () => {
-        this.set('imageHeight', img.height);
-        this.set('imageWidth', img.width);
-      };
-    },
-
-    getShadowSizeClick() {
-      let img = new Image();
-      img.src = this.get('shadowURL');
-      img.onload =  () => {
-        this.set('shadowHeight', img.height);
-        this.set('shadowWidth', img.width);
-      };
-    },
-
     applyImageClick() {
-      let canvas = document.getElementById('imageCanvas');
-      let ctx = canvas.getContext('2d');
-      let canvasSize = this.get('canvasSize');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let maxSize = this.get('maxSize');
       let img = new Image();
       img.src = this.get('imageURL');
-      img.onload =  () => {
-
-        if (img.width > canvasSize || img.height > canvasSize) {
+      img.onload = () => {
+        if (img.width > maxSize || img.height > maxSize || img.width <= 0 || img.height <= 0) {
           this.set('imageInputClass', 'input error');
           return;
         }
 
-        let newWidth;
-        let newHeight;
+        let oldWidth = img.width;
         if (img.width > img.height) {
-          newWidth = canvasSize;
-          newHeight = canvasSize * img.height / img.width;
+          img.height = maxSize * img.height / img.width;
+          img.width = maxSize;
         } else {
-          newHeight = canvasSize;
-          newWidth = canvasSize * img.width / img.height;
+          img.width = maxSize * img.width / img.height;
+          img.height = maxSize;
         }
 
-        let startX = (canvasSize / 2 - newWidth / 2);
-        let startY = (canvasSize / 2 - newHeight / 2);
-
-        ctx.drawImage(
-          img,
-          startX,
-          startY,
-          newWidth,
-          newHeight
-        );
-
-        ctx.strokeStyle = '#000000';
-        let i = startX;
-        let step = Math.round(newWidth / img.width);
-
-        ctx.moveTo(startX, startY);
-
-        while (i + step <= newWidth + startX) {
-          console.log('i:' + i);
-          ctx.moveTo(i, startY);
-          ctx.lineTo(i, newHeight + startY);
-          i += step;
-        }
-
-        i = startY;
-        console.log('горизонтали пошли');
-        while (i + step <= newHeight + startY) {
-          console.log('i:' + i);
-          ctx.moveTo(startX, i);
-          ctx.lineTo(newWidth + startX, i);
-          i += step;
-        }
-
-        ctx.stroke();
-        this._redrawResult();
+        this.set('imageToShow', img);
+        this.set('imageHeight', img.height);
+        this.set('imageWidth', img.width);
+        this.set('imageTableCellStep', Math.round(img.width / oldWidth));
       };
-
     },
 
     applyShadowClick() {
-      let canvas = document.getElementById('shadowCanvas');
-      let canvasSize = this.get('canvasSize');
-      let ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let maxSize = this.get('maxSize');
       let img = new Image();
       img.src = this.get('shadowURL');
-      img.onload =  () => {
-
-        if (img.width > canvasSize || img.height > canvasSize) {
-          this.set('shadInputClass', 'input error');
+      img.onload = () => {
+        if (img.width > maxSize || img.height > maxSize || img.width <= 0 || img.height <= 0) {
+          this.set('shadowInputClass', 'input error');
           return;
         }
 
-        ctx.drawImage(
-          img,
-          (canvasSize / 2 - this.get('shadowWidth') / 2),
-          (canvasSize / 2 - this.get('shadowHeight') / 2),
-          this.get('shadowWidth'),
-          this.get('shadowHeight')
-        );
-        this._redrawResult();
+        let oldWidth = img.width;
+        if (img.width > img.height) {
+          img.height = maxSize * img.height / img.width;
+          img.width = maxSize;
+        } else {
+          img.width = maxSize * img.width / img.height;
+          img.height = maxSize;
+        }
+
+        this.set('shadowToShow', img);
+        this.set('shadowHeight', img.height);
+        this.set('shadowWidth', img.width);
+        this.set('shadowTableCellStep', Math.round(img.width / oldWidth));
       };
     }
   }

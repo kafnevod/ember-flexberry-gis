@@ -45,3 +45,27 @@
     }
   }
 }
+
+.flexberry-add-marker {
+  table {
+    border: 1px #ff0000 solid;
+    border-collapse: collapse;
+    table-layout: fixed;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  td {
+    border: 1px #ff0000 solid;
+   }
+
+  td:hover {
+    background: #ffdddd;
+    cursor: pointer;
+  }
+
+  td.active {
+    background: #ff0000
+  }
+}

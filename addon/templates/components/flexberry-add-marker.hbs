@@ -15,32 +15,6 @@
               }}
               <div class="ui grid">
                 <div class="two column row">
-                  <div class="column">
-                    {{flexberry-field
-                      value=imageWidth
-                      label=(t "components.flexberry-add-marker.width")
-                      placeholder=placeholder
-                      readonly=readonly
-                      type="number"
-                      maxlength=maxlength
-                    }}
-                  </div>
-                  <div class="column">
-                    {{flexberry-field
-                      value=imageHeight
-                      label=(t "components.flexberry-add-marker.height")
-                      placeholder=placeholder
-                      readonly=readonly
-                      type="number"
-                      maxlength=maxlength
-                    }}
-                  </div>
-                  {{flexberry-button
-                    class=applyImageClass
-                    iconClass=class
-                    caption=(t "components.flexberry-add-marker.get-size")
-                    click=(action "getImageSizeClick")
-                  }}
                   {{flexberry-button
                     class=applyImageClass
                     readonly=applyImageReadonly
@@ -52,7 +26,15 @@
               </div>
             </div>
             <div class="four wide column">
-              <canvas id="imageCanvas" width="200px" height="200px"></canvas>
+              <div style="height: 200px; width: 200px;">
+                {{imageToShow}}
+                <table style="
+                    width: {{imageWidth}}px;
+                    height: {{imageHeight}}px"
+                    >
+                  <tr><td></td></tr>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -70,32 +52,6 @@
               }}
               <div class="ui grid">
                 <div class="two column row">
-                  <div class="column">
-                    {{flexberry-field
-                      value=shadowWidth
-                      label=(t "components.flexberry-add-marker.width")
-                      placeholder=placeholder
-                      readonly=readonly
-                      type="number"
-                      maxlength=maxlength
-                    }}
-                  </div>
-                  <div class="column">
-                    {{flexberry-field
-                      value=shadowHeight
-                      label=(t "components.flexberry-add-marker.height")
-                      placeholder=placeholder
-                      readonly=readonly
-                      type="number"
-                      maxlength=maxlength
-                    }}
-                  </div>
-                  {{flexberry-button
-                    class=applyImageClass
-                    iconClass=class
-                    caption=(t "components.flexberry-add-marker.get-size")
-                    click=(action "getShadowSizeClick")
-                  }}
                   {{flexberry-button
                     class=applyShadowClass
                     readonly=applyShadowReadonly
@@ -107,7 +63,17 @@
               </div>
             </div>
             <div class="four wide column">
-                <canvas id="shadowCanvas"  width="200px" height="200px"></canvas>
+              <div style="height: 200px; width: 200px;">
+                <div style="height: 200px; width: 200px;">
+                  {{shadowToShow}}
+                  <table style="
+                      width: {{shadowWidth}}px;
+                      height: {{shadowHeight}}px"
+                      >
+                    <tr><td></td></tr>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
