@@ -16,6 +16,8 @@ export default Ember.Component.extend({
 
   imageInputClass: undefined,
 
+  imageActiveCell: undefined,
+
   applyImageReadonly: false,
 
   shadowURL: undefined,
@@ -28,6 +30,8 @@ export default Ember.Component.extend({
 
   shadowInputClass: undefined,
 
+  shadowActiveCell: undefined,
+
   applyShadowReadonly: false,
 
   imageTableCells: undefined,
@@ -35,6 +39,10 @@ export default Ember.Component.extend({
   shadowTableCells: undefined,
 
   cellSize: 10,
+
+  imageAncor: undefined,
+
+  shadowAncor: undefined,
 
   init() {
     this._super(...arguments);
@@ -70,10 +78,10 @@ export default Ember.Component.extend({
         this.set('imageWidth', img.width);
 
         let cells = [];
-        for (let i = 0; i <= img.height / this.get('cellSize'); i += 1) {
+        for (let i = 0; i <= img.width / this.get('cellSize'); i += 1) {
           let row = [];
-          for (let j = 0; j <= img.width / this.get('cellSize'); j += 1) {
-            row.push('1');
+          for (let j = 0; j <= img.height / this.get('cellSize'); j += 1) {
+            row.push([i, j]);
           }
 
           cells.push(row);
@@ -82,10 +90,6 @@ export default Ember.Component.extend({
         this.set('imageTableCells', cells);
       };
 
-    },
-
-    test(e) {
-      console.log(e);
     },
 
     applyShadowClick() {
@@ -106,16 +110,71 @@ export default Ember.Component.extend({
         this.set('shadowWidth', img.width);
 
         let cells = [];
-        for (let i = 0; i <= img.height / this.get('cellSize'); i += 1) {
+        for (let i = 0; i <= img.width / this.get('cellSize'); i += 1) {
           let row = [];
-          for (let j = 0; j <= img.width / this.get('cellSize'); j += 1) {
-            row.push('1');
+          for (let j = 0; j <= img.height / this.get('cellSize'); j += 1) {
+            row.push([i, j]);
           }
 
           cells.push(row);
         }
 
         this.set('shadowTableCells', cells);
+      };
+    },
+
+    imageTableClick(cell, e) {
+      let activeCell = this.get('imageActiveCell');
+      if (e.target.tagName !== 'TD') {
+        return;
+      }
+
+      if (!Ember.isNone(activeCell)) {
+        activeCell.classList.remove('active');
+      }
+
+      e.target.classList.add('active');
+      this.set('imageActiveCell', e.target);
+      this.set('imageAncor', cell);
+    },
+
+    shadowTableClick(cell, e) {
+      let activeCell = this.get('shadowActiveCell');
+      if (e.target.tagName !== 'TD') {
+        return;
+      }
+
+      if (!Ember.isNone(activeCell)) {
+        activeCell.classList.remove('active');
+      }
+
+      e.target.classList.add('active');
+      this.set('shadowActiveCell', e.target);
+      this.set('shadowAncor', cell);
+    },
+
+    previewClick() {
+      let imageAncor = this.get('imageAncor');
+      let shadowAncor = this.get('shadowAncor');
+      let resultCanvas = document.getElementById('resultCanvas');
+      let resultCtx = resultCanvas.getContext('2d');
+      resultCtx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+
+      let shadow = new Image();
+      let img = new Image();
+      shadow.src = this.get('shadowURL');
+      img.src = this.get('imageURL');
+      shadow.onload =  () => {
+        resultCtx.drawImage(
+          shadow,
+          imageAncor[0] - shadowAncor[0] + 1,
+          imageAncor[1] - shadowAncor[1] + 1
+        );
+        resultCtx.drawImage(
+          img,
+          0,
+          0
+        );
       };
     }
   }

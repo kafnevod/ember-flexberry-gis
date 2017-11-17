@@ -26,7 +26,7 @@
               </div>
             </div>
             <div class="four wide column">
-              <div style="height: 200px; width: 200px; overflow: scroll;">
+              <div style="height: 200px; width: 200px; overflow: scroll; position: relative;">
                 {{imageToShow}}
                 <table style="
                     width: {{imageWidth}}px;
@@ -35,7 +35,7 @@
                   {{#each imageTableCells as |row| }}
                     <tr>
                       {{#each row as |cell|}}
-                        <td></td>
+                        <td onclick={{action "imageTableClick" cell}}></td>
                       {{/each}}
                     </tr>
                   {{/each}}
@@ -69,16 +69,16 @@
               </div>
             </div>
             <div class="four wide column">
-              <div style="height: 200px; width: 200px; overflow: scroll;">
+              <div style="height: 200px; width: 200px; overflow: scroll; position: relative;">
                 {{shadowToShow}}
                 <table style="
                     width: {{shadowWidth}}px;
-                    height: {{shadowHeight}}px"
+                    height: {{shadowHeight}}px;"
                     >
                   {{#each shadowTableCells as |srow| }}
                     <tr>
                       {{#each srow as |scell|}}
-                        <td onclick={{action 'test'}}></td>
+                        <td onclick={{action 'shadowTableClick' scell}}></td>
                       {{/each}}
                     </tr>
                   {{/each}}
@@ -91,6 +91,11 @@
 
   </div>
   <div class="four wide column">
+    {{flexberry-button
+      iconClass=class
+      caption=(t "components.flexberry-add-marker.apply")
+      click=(action "previewClick")
+    }}
     <canvas id="resultCanvas"  width="200px" height="200px"></canvas>
   </div>
 </div>
