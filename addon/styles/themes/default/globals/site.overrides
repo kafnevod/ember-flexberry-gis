@@ -62,7 +62,7 @@
   }
 
   td {
-    border: 1px #ff0000 solid;
+    border: 1px #d3d3d3 solid;
    }
 
   td:hover {

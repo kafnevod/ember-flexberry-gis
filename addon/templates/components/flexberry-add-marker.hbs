@@ -14,7 +14,7 @@
                 maxlength=maxlength
               }}
               <div class="ui grid">
-                <div class="two column row">
+                <div class="two column row" align="right">
                   {{flexberry-button
                     class=applyImageClass
                     readonly=applyImageReadonly
@@ -91,11 +91,16 @@
 
   </div>
   <div class="four wide column">
+    <canvas id="resultCanvas"  width="200px" height="200px"></canvas>
     {{flexberry-button
-      iconClass=class
-      caption=(t "components.flexberry-add-marker.apply")
+      class="fluid"
+      caption=(t "components.flexberry-add-marker.preview")
       click=(action "previewClick")
     }}
-    <canvas id="resultCanvas"  width="200px" height="200px"></canvas>
+    {{flexberry-button
+      class="fluid"
+      caption="OK"
+      click=(action "okClick")
+    }}
   </div>
 </div>

@@ -124,7 +124,7 @@ export default {
 
       'apply': 'Apply',
 
-      'get-size': 'Get image size'
+      'preview': 'Preview'
     },
   },
 
