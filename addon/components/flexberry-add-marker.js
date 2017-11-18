@@ -78,10 +78,10 @@ export default Ember.Component.extend({
         this.set('imageWidth', img.width);
 
         let cells = [];
-        for (let i = 0; i <= img.width / this.get('cellSize'); i += 1) {
+        for (let i = 0; i <= img.height / this.get('cellSize'); i += 1) {
           let row = [];
-          for (let j = 0; j <= img.height / this.get('cellSize'); j += 1) {
-            row.push([i, j]);
+          for (let j = 0; j <= img.width / this.get('cellSize'); j += 1) {
+            row.push({ 'x': j, 'y': i });
           }
 
           cells.push(row);
@@ -110,10 +110,10 @@ export default Ember.Component.extend({
         this.set('shadowWidth', img.width);
 
         let cells = [];
-        for (let i = 0; i <= img.width / this.get('cellSize'); i += 1) {
+        for (let i = 0; i <= img.height / this.get('cellSize'); i += 1) {
           let row = [];
-          for (let j = 0; j <= img.height / this.get('cellSize'); j += 1) {
-            row.push([i, j]);
+          for (let j = 0; j <= img.width / this.get('cellSize'); j += 1) {
+            row.push({ 'x': j, 'y': i });
           }
 
           cells.push(row);
@@ -136,6 +136,7 @@ export default Ember.Component.extend({
       e.target.classList.add('active');
       this.set('imageActiveCell', e.target);
       this.set('imageAncor', cell);
+      console.log(cell);
     },
 
     shadowTableClick(cell, e) {
@@ -151,11 +152,14 @@ export default Ember.Component.extend({
       e.target.classList.add('active');
       this.set('shadowActiveCell', e.target);
       this.set('shadowAncor', cell);
+      console.log(cell);
     },
 
     previewClick() {
       let imageAncor = this.get('imageAncor');
+      console.log('imageAncor', imageAncor);
       let shadowAncor = this.get('shadowAncor');
+      console.log('shadowAncor', shadowAncor);
       let resultCanvas = document.getElementById('resultCanvas');
       let resultCtx = resultCanvas.getContext('2d');
       resultCtx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
@@ -167,8 +171,8 @@ export default Ember.Component.extend({
       shadow.onload =  () => {
         resultCtx.drawImage(
           shadow,
-          imageAncor[0] - shadowAncor[0] + 1,
-          imageAncor[1] - shadowAncor[1] + 1
+          imageAncor.x - shadowAncor.x,
+          imageAncor.y - shadowAncor.y
         );
         resultCtx.drawImage(
           img,
