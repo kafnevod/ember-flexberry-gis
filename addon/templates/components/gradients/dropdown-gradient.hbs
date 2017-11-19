@@ -1,11 +1,14 @@
-<div class="ui fluid search selection dropdown">
-  <input type="hidden" name="user">
+{{#ui-dropdown class="search selection" onChange=(action "onShowOpen")}}
   <i class="dropdown icon"></i>
-  <div class="default text">Select Friend</div>
-  <div class="menu">
-    <div class="item" data-value="jenny">
-      <img class="ui mini avatar image" src="/images/avatar/small/jenny.jpg">
-          Jenny Hess
-    </div>
+  <div class="default text">
+    Select gradient
   </div>
-</div>
+  <div class="menu">
+    {{#each _isGradTest as |gradTest|}}
+    <div class="item" data-value="{{gradTest.name}}">
+      <canvas class = "flag {{gradTest.name}} {{gradTest.colorS}} {{gradTest.colorE}}" width = "24" height = "14" style = "border:1px solid #000000;"></canvas>
+      {{gradTest.name}}
+    </div>
+    {{/each}}
+  </div>
+{{/ui-dropdown}}
