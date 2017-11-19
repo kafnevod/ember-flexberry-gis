@@ -16,5 +16,10 @@ export default Ember.Component.extend({
   /**
       Reference to component's template.
   */
-  layout
+  layout,
+
+  _isMainGradTest: [{ "name":"grad1", "colorS":"#ff0000", "colorE": "#ffff00" },
+      { "name":"grad2", "colorS":"#000000", "colorE": "#ffffff" },
+      { "name":"grad3", "colorS":"#00ff00", "colorE": "#0000ff" },
+      { "name":"grad4", "colorS":"#6464c8", "colorE": "#ff9616" }]
 });

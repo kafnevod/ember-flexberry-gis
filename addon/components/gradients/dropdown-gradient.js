@@ -18,13 +18,14 @@ export default Ember.Component.extend({
   */
   layout,
 
-  _isGradTest: [{ "name":"grad1", "colorS":"#ff0000", "colorE": "#ffff00" },
-      { "name":"grad2", "colorS":"#000000", "colorE": "#ffffff" },
-      { "name":"grad3", "colorS":"#00ff00", "colorE": "#0000ff" },
-      { "name":"grad4", "colorS":"#6464c8", "colorE": "#ff9616" }],
+  _isGradTest: null,
 
   init() {
     this._super(...arguments);
+    let asd = this.get('_isGradTest');
+    asd[asd.length+1] = { "name":"grad5", "colorS":"#646400", "colorE": "#009616" };
+
+    this.set('_isGradTest', asd);
 
     let owner = Ember.getOwner(this);
     //this.set('_availableTypes', owner.knownNamesForType('layer'));
