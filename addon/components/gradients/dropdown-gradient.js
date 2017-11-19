@@ -32,7 +32,7 @@ export default Ember.Component.extend({
     let availableEditModes = Ember.A();
     let editModesNames = owner.knownNamesForType('components/gradients/type-gradient');
     editModesNames.forEach((modeName) => {
-      let editModeFactory = owner.knownForType('edit-mode', modeName);
+      let editModeFactory = owner.knownForType('components/gradients/type-gradient', modeName);
       let isAvailable = editModeFactory.componentCanBeInserted(this);
       if (isAvailable) {
         availableEditModes.pushObject(editModeFactory);

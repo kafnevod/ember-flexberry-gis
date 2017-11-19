@@ -1,16 +1,12 @@
 /**
-  @module ember-flexberry-gis
+  @module ember-flexberry-gis-csw
 */
-
-import Ember from 'ember';
-
+import BaseEditMode from 'ember-flexberry-gis/edit-modes/-private/base';
 /**
-  Component for type chart pie.
-  @class PieComponent
-  @extends <a href="http://emberjs.com/api/classes/Ember.Component.html">Ember.Component</a>
+  Csw based edit mode.
+  @class CswEditMode
 */
-
-export default Ember.Component.extend({
+export default Object.assign(BaseEditMode, {
   name: "grad1",
 
   colorS: "#ff0000",
