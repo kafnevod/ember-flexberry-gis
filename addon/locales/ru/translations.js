@@ -104,9 +104,15 @@ export default {
       'opacity': 'Видимость'
     },
 
-    'gradient-edit':{
-      'gradientColorStart': 'Начальный цвет градиента',
-      'gradientColorEnd': 'Конечный цвет градиента'
+    'gradients': {
+      'gradient-edit':{
+        'gradientName': 'Наименование градиента',
+        'gradientColorStart': 'Начальный цвет градиента',
+        'gradientColorEnd': 'Конечный цвет градиента'
+      },
+      'dropdown-gradient': {
+        'default-text': 'Выбрать градиент'
+      }
     },
 
     'flexberry-maptoolbar': {},

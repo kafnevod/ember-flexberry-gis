@@ -104,9 +104,15 @@ export default {
       'opacity': 'Visibility'
     },
 
-    'gradient-edit':{
-      'gradientColorStart': 'Initial gradient color',
-      'gradientColorEnd': 'The final color of the gradient'
+    'gradients': {
+      'gradient-edit':{
+        'gradientName': 'Name of the gradient',
+        'gradientColorStart': 'Initial gradient color',
+        'gradientColorEnd': 'The final color of the gradient'
+      },
+      'dropdown-gradient': {
+        'default-text': 'Select gradient'
+      }
     },
 
     'flexberry-maptoolbar': {},

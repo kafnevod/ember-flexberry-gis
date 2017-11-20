@@ -17,22 +17,39 @@ export default Ember.Component.extend({
     Initial gradient color.
     @property _gradientColorStart
     @type string
-    @default '#000000'
+    @default null
   */
-  _gradientColorStart: '#000000',
+  _gradientColorStart: null,
 
   /**
     The final color of the gradient.
     @property _gradientColorEnd
     @type string
-    @default '#FFFFFF'
+    @default null
   */
-  _gradientColorEnd: '#FFFFFF',
+  _gradientColorEnd: null,
 
   /**
       Reference to component's template.
   */
   layout,
+
+  /**
+    The name of the gradient.
+    @property _nameGradient
+    @type string
+    @default 'New gradient'
+  */
+  _nameGradient: 'New gradient',
+
+  /**
+    Injected param-gradient-service.
+
+    @property service
+    @type <a href="http://emberjs.com/api/classes/Ember.Service.html">Ember.Service</a>
+    @default service:param-gradient
+  */
+  service: Ember.inject.service('param-gradient'),
 
   /**
     Component's wrapping <div> CSS-classes names.
@@ -46,22 +63,7 @@ export default Ember.Component.extend({
     @type String[]
     @default ['gradient-edit', 'flexberry-colorpicker']
   */
-  classNames: ['gradient-edit', 'flexberry-colorpicker'],
-
-  /**
-    Gradient display.
-    @method gradientDrawing
-  */
-  gradientDrawing(){
-    let ctx = this.$('.myCanvas')[0].getContext('2d');
-
-    let grd = ctx.createLinearGradient(0, 0, 300, 0);
-    grd.addColorStop(0, this.get('_gradientColorStart'));
-    grd.addColorStop(1, this.get('_gradientColorEnd'));
-
-    ctx.fillStyle = grd;
-    ctx.fillRect(0, 0, 300, 150);
-  },
+  classNames: ['gradient-edit'],
 
   /**
     Observes changes in Observes changes in the choice of gradient colors.
@@ -71,8 +73,24 @@ export default Ember.Component.extend({
     @private
   */
   _gradientColorStartChange: Ember.observer('_gradientColorStart', '_gradientColorEnd', function() {
-    this.gradientDrawing();
+    Ember.run.once(this, '_gradientDrawing');
   }),
+
+  /**
+    Gradient display.
+    @method gradientDrawing
+  */
+  _gradientDrawing() {
+    let paramGrad = this.get('service');
+    paramGrad.gradientDrawing('myCanvas', this.get('_gradientColorStart'), this.get('_gradientColorEnd'));
+  },
+  /**
+    Initializes DOM-related component's properties.
+  */
+  didInsertElement() {
+    let paramGrad = this.get('service');
+    paramGrad.gradientDrawing('myCanvas', this.get('_gradientColorStart'), this.get('_gradientColorEnd'));
+  },
 
   actions: {
     /**

@@ -18,65 +18,117 @@ export default Ember.Component.extend({
   */
   layout,
 
-  _isGradTest: null,
+  /**
+    Inner hash containing settings gradient object.
+    @property _isGradientList
+    @type Object[]
+    @default null
+  */
+  _isGradientList: null,
 
+  /**
+    Initial gradient color.
+    @property _gradientColorStart
+    @type string
+    @default null
+  */
+  _gradientColorStart: null,
+
+  /**
+    The final color of the gradient.
+    @property _gradientColorEnd
+    @type string
+    @default null
+  */
+  _gradientColorEnd: null,
+
+  /**
+    Injected param-gradient-service.
+
+    @property service
+    @type <a href="http://emberjs.com/api/classes/Ember.Service.html">Ember.Service</a>
+    @default service:param-gradient
+  */
+  service: Ember.inject.service('param-gradient'),
+
+  /**
+    Initializes component.
+  */
   init() {
     this._super(...arguments);
-    let asd = this.get('_isGradTest');
-    asd[asd.length+1] = { "name":"grad5", "colorS":"#646400", "colorE": "#009616" };
 
-    this.set('_isGradTest', asd);
+    let paramGrad = this.get('service');
+    this.set('_isGradientList', paramGrad.getGradientList());
 
     let owner = Ember.getOwner(this);
-    //this.set('_availableTypes', owner.knownNamesForType('layer'));
-
-    let availableEditModes = Ember.A();
-    let editModesNames = owner.knownNamesForType('components/gradients/type-gradient');
-    editModesNames.forEach((modeName) => {
-      let editModeFactory = owner.knownForType('components/gradients/type-gradient', modeName);
-      let isAvailable = editModeFactory.componentCanBeInserted(this);
-      if (isAvailable) {
-        availableEditModes.pushObject(editModeFactory);
-      }
-    });
-  },
-
-  canGrad(idCan, colorS, colorE) {
-    let ctx = this.$('.'+idCan)[0].getContext('2d');
-
-    let grd = ctx.createLinearGradient(0, 0, 24, 0);
-    grd.addColorStop(0, colorS);
-    grd.addColorStop(1, colorE);
-
-    ctx.fillStyle = grd;
-    ctx.fillRect(0, 0, 24, 14);
-  },
-
-  didInsertElement() {
-    let isObject = this.get('_isGradTest');
-
-    for (var i in isObject)
-    {
-      this.canGrad(isObject[i]['name'], isObject[i]['colorS'], isObject[i]['colorE']);
+    let isGradients = owner.knownForType('gradient');
+    for (let i in isGradients) {
+      paramGrad.addGradientList(isGradients[i]['name'], isGradients[i]['colorS'], isGradients[i]['colorE']);
     }
   },
 
-  getValues(array, search) {
-    let values1 = [];
+  /**
+    Component's wrapping <div> CSS-classes names.
 
-    array.forEach(function(item, values){
-      (item.name === search) && values1.push(item.colorS, item.colorE);
+    Any other CSS-class names can be added through component's 'class' property.
+    ```handlebars
+    {{feature-result-item class="my-class"}}
+    ```
+
+    @property classNames
+    @type String[]
+    @default ['gradient-edit', 'flexberry-colorpicker']
+  */
+  classNames: ['gradient-edit', 'flexberry-colorpicker'],
+
+  /**
+    Initializes DOM-related component's properties.
+  */
+  didInsertElement() {
+    let paramGrad = this.get('service');
+    let isGradients = paramGrad.getGradientList();
+
+    for (let i in isGradients)
+    {
+      paramGrad.gradientDrawing(isGradients[i]['canName'], isGradients[i]['colorS'], isGradients[i]['colorE']);
+    }
+  },
+
+  /**
+    Search for the start and end colors of the selected gradient.
+
+    @method getColorGradient
+    @param {String} search The name of the selected gradient.
+    @returns Object[] color list gradient.
+  */
+  getColorGradient(search) {
+    let colorsGradient = Ember.A([]);
+    let paramGrad = this.get('service');
+    let isGradients = paramGrad.getGradientList();
+
+    isGradients.forEach(function(item){
+      if (item.name === search) {
+        colorsGradient.push(item.canName, item.colorS, item.colorE);
+      }
     });
 
-    return values1;
+    return colorsGradient;
   },
 
   actions: {
-    onShowOpen(element, value) {
-      let isObject = this.get('_isGradTest');
-      let vvv = this.getValues(isObject, value);
+    /**
+      The handler for the selected value in dropdown.
 
-      this.canGrad(value, vvv[0], vvv[1]);
+      @method actions.onChangeGradient
+    */
+    onChangeGradient(element, value) {
+      let paramGrad = this.get('service');
+      let gradientColor = this.getColorGradient(value);
+
+      paramGrad.gradientDrawing(gradientColor[0], gradientColor[1], gradientColor[2]);
+
+      this.set('_gradientColorStart', gradientColor[1]);
+      this.set('_gradientColorEnd', gradientColor[2]);
     }
   }
 });
