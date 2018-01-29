@@ -181,7 +181,7 @@ export default Ember.Route.extend(FlexberryBoundingboxMapLoaderMixin, {
 
     if (searchConditions && !Ember.isNone(searchConditions.boundingBoxEWKT)) {
 
-      let boundingBoxIntersectionCondition = new Query.GeographyPredicate('boundingBox').intersects(searchConditions.boundingBoxEWKT);
+      let boundingBoxIntersectionCondition = new Query.GeometryPredicate('boundingBox').intersects(searchConditions.boundingBoxEWKT);
       let boundingBoxIsNullCondition = new Query.SimplePredicate('boundingBox', Query.FilterOperator.Eq, null);
 
       filterConditions.addObject(new Query.ComplexPredicate(Query.Condition.Or, boundingBoxIsNullCondition, boundingBoxIntersectionCondition));
