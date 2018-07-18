@@ -65,6 +65,19 @@
     }
 }
 
+.flexberry-select-panel {
+    .ui.icon.button {
+      padding: @uiIconButtonPadding;
+      margin-right: -1px;
+      &.flexberry-select-panel-rectangle-tools-option {
+        border-radius: 5px 0px 0px 5px;
+      }
+      &.flexberry-select-panel-polygon-tools-option {
+        border-radius: 0px 5px 5px 0px;
+      }
+    }
+}
+
 .flexberry-search-panel .flexberry-search.ui.search {
   .ui.search-button {
     position: absolute;

@@ -5,5 +5,6 @@ export default {
   'select-all-caption': 'Выбрать все',
   'feature-table-property-name': 'Поле',
   'feature-table-property-value': 'Значение',
-  'select-object-caption': 'К объекту'
+  'select-object-caption': 'К объекту',
+  'save-changes-caption': 'Сохранить изменения'
 };

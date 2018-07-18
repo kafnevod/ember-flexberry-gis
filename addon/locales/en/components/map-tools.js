@@ -33,6 +33,10 @@ export default {
       'caption': 'Clear'
     }
   },
+  'select': {
+    'caption': 'Select',
+    'tooltip': 'Select'
+  },
   'measure': {
     'caption': 'Measure',
     'tooltip': 'Measure',

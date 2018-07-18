@@ -320,12 +320,17 @@
         left: 248px;
     }
     /* переход к точке */
-    .flexberry-identify-map-tool {
-        border-radius: 0px 5px 5px 0px;
-        left: 284px;
-    }
     .flexberry-full-extent-map-command {
         border-radius: 5px;
+    }
+    /* идентификация */
+    .flexberry-identify-map-tool {
+        left: 284px;
+    }
+    /* выбор объектов */
+    .flexberry-select-map-tool {
+        border-radius: 0px 5px 5px 0px;
+        left: 320px;
     }
     /* поиск по карте */
     .flexberry-go-to-map-command {
@@ -541,14 +546,15 @@
 }
 
 /*********************************************
-          Flexberry Identify Panel
+          Flexberry Identify And Select Panel
 *********************************************/
 
 .sidebar.identify {
   background: #fff none;
 }
 
-.flexberry-identify-panel {
+.flexberry-identify-panel,
+.flexberry-select-panel {
   background: #fff none;
 
   &.celled.grid {
@@ -574,7 +580,8 @@
     box-shadow: none !important;
     padding: 0px !important;
   }
-  .flexberry-identify-panel-layers-options {
+  .flexberry-identify-panel-layers-options,
+  .flexberry-select-panel-layers-options {
     text-align: left;
     &[class*="eight wide"].column {
       width: 35%;
@@ -594,7 +601,8 @@
       content: "\e828";
     }
   }
-  .flexberry-identify-panel-tools-options {
+  .flexberry-identify-panel-tools-options,
+  .flexberry-select-panel-tools-options {
     text-align: left;
     i.icon.square.outline:before {
       font-family: Icons;

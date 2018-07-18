@@ -23,6 +23,7 @@ import FlexberryWfsFilterComponent from './components/flexberry-wfs-filter';
 import FlexberryBoundingboxComponent from './components/flexberry-boundingbox';
 import FlexberryEditCrsComponent from './components/flexberry-edit-crs';
 import FlexberryIdentifyPanel from './components/flexberry-identify-panel';
+import FlexberrySelectPanel from './components/flexberry-select-panel';
 import FlexberryLayersAttributesPanel from './components/flexberry-layers-attributes-panel';
 import GeometryAddModesComponents from './components/geometry-add-modes';
 import ChartsComponents from './components/charts';
@@ -59,6 +60,7 @@ export default {
   'flexberry-boundingbox': FlexberryBoundingboxComponent,
   'flexberry-edit-crs': FlexberryEditCrsComponent,
   'flexberry-identify-panel': FlexberryIdentifyPanel,
+  'flexberry-select-panel': FlexberrySelectPanel,
   'flexberry-layers-attributes-panel': FlexberryLayersAttributesPanel,
   'flexberry-multiple-select': FlexberryMultipleSelectComponent,
   'geometry-add-modes': GeometryAddModesComponents,

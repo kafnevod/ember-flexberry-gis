@@ -33,6 +33,10 @@ export default {
       'caption': 'Очистить'
     }
   },
+  'select': {
+    'caption': 'Выбрать',
+    'tooltip': 'Выбрать'
+  },
   'measure': {
     'caption': 'Измерить',
     'tooltip': 'Измерить',
