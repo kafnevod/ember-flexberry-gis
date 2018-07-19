@@ -5,7 +5,6 @@
 import Ember from 'ember';
 import layout from '../templates/components/feature-select-result-item-wfs';
 import SnappingHandlerMixin from '../mixins/snapping-handler';
-import DraggableHandlerMixin from '../mixins/draggable-handler';
 
 /**
   Component for display GeoJSON feature object details from selecting results.
@@ -13,7 +12,7 @@ import DraggableHandlerMixin from '../mixins/draggable-handler';
   @class FeatureResultItemComponent
   @extends <a href="http://emberjs.com/api/classes/Ember.Component.html">Ember.Component</a>
  */
-export default Ember.Component.extend(SnappingHandlerMixin, DraggableHandlerMixin, {
+export default Ember.Component.extend(SnappingHandlerMixin, {
 
   /**
     Component's wrapping <div> CSS-classes names.
@@ -268,6 +267,7 @@ export default Ember.Component.extend(SnappingHandlerMixin, DraggableHandlerMixi
       Ember.set(leafletMap, 'editTools', editTools);
 
       if (!layer.editEnabled()) {
+        leafletMap.fire('flexberry-map:switchToDefaultMapTool');
         // If the layer is not on the map - add it
         if (!leafletMap.hasLayer(layer)) {
           this.set('_isAdded', true);
@@ -278,15 +278,19 @@ export default Ember.Component.extend(SnappingHandlerMixin, DraggableHandlerMixi
         this.get('feature.leafletLayer').remove();
 
         this.set('_saveDragState', true);
-        layer.enableEdit(leafletMap);
-        leafletMap.on('editable:editing', this._triggerChanged, this);
-        layer.on('mousedown', this._dragOnMouseDown, this);
-        leafletMap.on('editable:vertex:dragstart', this._startSnapping, this);
-        leafletMap.fire('flexberry-map:activateDefaultMapTool');
+        layer.enableDrag();
+        if (!(layer instanceof L.Marker)) {
+          layer.enableEdit(leafletMap);
+          leafletMap.on('editable:editing', this._triggerChanged, this);
+          leafletMap.on('editable:vertex:dragstart', this._startSnapping, this);
+        }
+
+        layer.on('drag:dragend', this._triggerChanged, this);
       } else {
         layer.disableEdit();
+        layer.disableDrag();
+        layer.off('dragend', this._triggerChanged, this);
         leafletMap.off('editable:editing', this._triggerChanged, this);
-        layer.off('mousedown', this._dragOnMouseDown, this);
 
         if (this.get('_isAdded')) {
           leafletMap.removeLayer(layer);

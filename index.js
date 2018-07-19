@@ -106,6 +106,8 @@ module.exports = {
     // Leaflet.Util.CloneLayer.
     app.import('vendor/leaflet/utils/leaflet.util.cloneLayer.js');
 
+    app.import('vendor/leaflet/edit/leaflet.draggable-mixin.js');
+
     // Leaflet switch scale control.
     app.import(app.bowerDirectory + '/leaflet-switch-scale-control/src/L.Control.SwitchScaleControl.js');
     app.import(app.bowerDirectory + '/leaflet-switch-scale-control/src/L.Control.SwitchScaleControl.css');
