@@ -4,7 +4,6 @@
 
 import Ember from 'ember';
 import layout from '../templates/components/feature-select-result-item-wfs';
-import SnappingHandlerMixin from '../mixins/snapping-handler';
 
 /**
   Component for display GeoJSON feature object details from selecting results.
@@ -12,7 +11,7 @@ import SnappingHandlerMixin from '../mixins/snapping-handler';
   @class FeatureResultItemComponent
   @extends <a href="http://emberjs.com/api/classes/Ember.Component.html">Ember.Component</a>
  */
-export default Ember.Component.extend(SnappingHandlerMixin, {
+export default Ember.Component.extend({
 
   /**
     Component's wrapping <div> CSS-classes names.
@@ -281,16 +280,19 @@ export default Ember.Component.extend(SnappingHandlerMixin, {
         layer.enableDrag();
         if (!(layer instanceof L.Marker)) {
           layer.enableEdit(leafletMap);
-          leafletMap.on('editable:editing', this._triggerChanged, this);
-          leafletMap.on('editable:vertex:dragstart', this._startSnapping, this);
+          layer.on('editable:editing', this._triggerChanged, this);
+          let leafletObject = this.get('feature.layerModel._leafletObject') || {};
+          let layersList = leafletObject.getLayers ? leafletObject.getLayers() : [];
+          layer.enableSnap(layersList.filter((feature) => feature !== layer), { snapDistance: 20 });
         }
 
         layer.on('drag:dragend', this._triggerChanged, this);
       } else {
         layer.disableEdit();
+        layer.disableSnap();
         layer.disableDrag();
         layer.off('dragend', this._triggerChanged, this);
-        leafletMap.off('editable:editing', this._triggerChanged, this);
+        layer.off('editable:editing', this._triggerChanged, this);
 
         if (this.get('_isAdded')) {
           leafletMap.removeLayer(layer);
@@ -308,9 +310,9 @@ export default Ember.Component.extend(SnappingHandlerMixin, {
     let bindedLayer = this.get('_bindedLayer');
     if (bindedLayer) {
       bindedLayer.disableEdit();
-      bindedLayer._map.off('editable:editing', this._triggerChanged, this);
+      bindedLayer.off('editable:editing', this._triggerChanged, this);
       bindedLayer.off('mousedown', this._dragOnMouseDown, this);
-      bindedLayer._map.off('editable:vertex:dragstart', this._startSnapping, this);
+      bindedLayer.disableSnap();
     }
   }
 

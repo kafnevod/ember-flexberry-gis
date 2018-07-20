@@ -196,16 +196,14 @@ L.DragHandler = L.Handler.extend({
 
 if (L.Path) {
   L.Path.include(DragMixin);
+  L.Path.addInitHook(function () {
+    this.dragHandler = new L.DragHandler(this);
+  });
 }
 
 if (L.Marker) {
   L.Marker.include(DragMixin);
+  L.Marker.addInitHook(function () {
+    this.dragHandler = new L.DragHandler(this);
+  });
 }
-
-L.Path.addInitHook(function () {
-  this.dragHandler = new L.DragHandler(this);
-});
-
-L.Marker.addInitHook(function () {
-  this.dragHandler = new L.DragHandler(this);
-});
