@@ -10,6 +10,13 @@
       {{action "zoomTo" result.features}}>
       <i class="marker icon"></i>
     </a>
+    {{#if result.editable}}
+      <a class="feature-result-save icon item"
+        title="{{t "components.feature-result-item.save-changes-caption"}}"
+        {{action "saveChanges" result}}>
+        <i class="save icon{{unless result._wasChanged " disabled"}}"></i>
+      </a>
+    {{/if}}
     {{#if (gt result.listForms.length 0)}}
       {{#if (eq result.listForms.length 1)}}
         <a class="feature-result-item-list icon item"
@@ -36,8 +43,8 @@
     {{#flexberry-toggler caption=result.name expanded=result.first class='layer-result-list-toggler'}}
       <div class="ui list transition">
         {{#each result.features as |feature|}}
-          {{#if (known-for-type 'component' (concat 'feature-result-item-' result.layerModel.type))}}
-            {{component (concat 'feature-result-item-' result.layerModel.type)
+          {{#if (known-for-type 'component' (concat 'feature-' operationType '-result-item-' result.layerModel.type))}}
+            {{component (concat 'feature-' operationType '-result-item-' result.layerModel.type)
               feature=feature
               infoExpanded=(and (eq result.features.length 1) result.first)
               displayProperty="displayValue"
@@ -46,6 +53,7 @@
               selectFeature=(action "selectFeature")
               panTo=(action "panTo")
               zoomTo=(action "zoomTo")
+              triggerChanged=(action "triggerChanged" result)
             }}
           {{else}}
             {{feature-result-item

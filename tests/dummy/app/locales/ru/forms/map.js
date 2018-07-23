@@ -4,6 +4,7 @@ export default {
   'searchbuttontooltip': 'Поиск',
   'bookmarksbuttontooltip': 'Пространственные закладки',
   'identifybuttontooltip': 'Идентификация',
+  'selectbuttontooltip': 'Выбор объектов',
 
   'tabbar': {
     'treeview': {
@@ -14,6 +15,9 @@ export default {
     },
     'identify': {
       'caption': 'Идентификация'
+    },
+    'select': {
+      'caption': 'Выбор объектов'
     },
     'bookmarks': {
       'caption': 'Пространственные закладки'

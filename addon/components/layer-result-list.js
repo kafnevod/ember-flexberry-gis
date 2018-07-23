@@ -67,6 +67,15 @@ export default Ember.Component.extend(LeafletZoomToFeatureMixin, {
   results: null,
 
   /**
+    Type of operation, whose results will be shown here.
+
+    @property operationType
+    @type String
+    @default 'identify'
+  */
+  operationType: 'identify',
+
+  /**
     Ready results for display without promise.
 
     @property _displayResults
@@ -118,6 +127,50 @@ export default Ember.Component.extend(LeafletZoomToFeatureMixin, {
      */
     toggleLinks() {
       this.set('_linksExpanded', !this.get('_linksExpanded'));
+    },
+
+    /**
+      Save changes in specified layer.
+
+      @method saveChanges
+      @param {Object} layer Changed layer.
+    */
+    saveChanges(layer) {
+      if (!layer._wasChanged) {
+        return;
+      }
+
+      let leafletObject = Ember.get(layer || {}, 'layerModel._leafletObject');
+      let saveFailed = (data) => {
+        this.set('error', data);
+        leafletObject.off('save:success', saveSuccess);
+      };
+
+      let saveSuccess = (data) => {
+        Ember.set(layer, '_wasChanged', false);
+        layer.features.forEach((feature) => {
+          Ember.set(feature, '_wasChanged', false);
+        });
+
+        leafletObject.off('save:failed', saveFailed);
+      };
+
+      leafletObject.once('save:failed', saveFailed);
+      leafletObject.once('save:success', saveSuccess);
+      leafletObject.save();
+    },
+
+    /**
+      Indicates that layer was changed.
+
+      @method triggerChanged
+      @param {Object} layer Changed layer.
+      @param {Object} e Event object.
+    */
+    triggerChanged(layer, e) {
+      Ember.set(layer, '_wasChanged', true);
+      let leafletObject = Ember.get(layer || {}, 'layerModel._leafletObject');
+      leafletObject.editLayer(e.layer || e.target);
     }
   },
 
@@ -171,6 +224,20 @@ export default Ember.Component.extend(LeafletZoomToFeatureMixin, {
         }
       }
     });
+  },
+
+  /**
+    Returns whether or not layer can be edited.
+
+    @method _isLayerEditable
+    @param {String} layerType Layer type.
+  */
+  _isLayerEditable(layerType) {
+    if (this.get('operationType') === 'select') {
+      return layerType === 'wfs' || layerType === 'wms-wfs';
+    }
+
+    return false;
   },
 
   /**
@@ -268,6 +335,7 @@ export default Ember.Component.extend(LeafletZoomToFeatureMixin, {
         result.first = result.order === 1;
         result.last = result.order === displayResults.length;
         order += 1;
+        result.editable = this._isLayerEditable(Ember.get(result, 'layerModel.type'));
 
         result.features = result.features.sort((a, b) => {
           // If displayValue is empty, it should be on the bottom.

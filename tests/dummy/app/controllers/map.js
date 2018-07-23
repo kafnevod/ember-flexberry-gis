@@ -42,6 +42,15 @@ export default EditMapController.extend(EditFormControllerOperationsIndicationMi
   identifyToolOption: 'marker',
 
   /**
+    Parameter contains current map identification tool option (arrow, square, polygon etc.).
+
+    @property identifyToolOption
+    @type String
+    @default 'marker'
+  */
+  selectToolOption: 'marker',
+
+  /**
     Leaflet layer group for temporal layers.
 
     @property serviceLayer
@@ -140,6 +149,11 @@ export default EditMapController.extend(EditFormControllerOperationsIndicationMi
     captionPath: 'forms.map.identifybuttontooltip',
     iconClass: 'info circle icon',
     class: 'identify'
+  }, {
+    selector: 'select',
+    captionPath: 'forms.map.selectbuttontooltip',
+    iconClass: 'info circle icon',
+    class: 'select'
   }, {
     selector: 'bookmarks',
     captionPath: 'forms.map.bookmarksbuttontooltip',
@@ -341,6 +355,20 @@ export default EditMapController.extend(EditFormControllerOperationsIndicationMi
         });
       }
 
+      if (e.tabName === 'select') {
+        let leafletMap = this.get('leafletMap');
+        if (Ember.isNone(leafletMap)) {
+          return;
+        }
+
+        let tool = this.get('selectToolOption');
+
+        let mapToolName = 'select-' + tool;
+        leafletMap.fire('flexberry-map:identificationOptionChanged', {
+          mapToolName
+        });
+      }
+
       if (e.tabName === 'treeview') {
         if (!this.get('showTree')) {
           Ember.run.later(() => {
@@ -399,13 +427,15 @@ export default EditMapController.extend(EditFormControllerOperationsIndicationMi
     /**
       Handles 'flexberry-identify-panel:identificationFinished' event of leaflet map.
 
-      @method identificationFinished
+      @method onIdentificationFinished
+      @param {String} operationType Identification operation.
       @param {Object} e Event object.
-      @param {Object} results Hash containing search results.
-      @param {Object[]} results.features Array containing (GeoJSON feature-objects)[http://geojson.org/geojson-spec.html#feature-objects]
+      @param {Object} e.results Hash containing search results.
+      @param {Object[]} e.results.features Array containing (GeoJSON feature-objects)[http://geojson.org/geojson-spec.html#feature-objects]
       or a promise returning such array.
     */
-    onIdentificationFinished(e) {
+    onIdentificationFinished(operationType, e) {
+      let operation = operationType || 'identify';
       let serviceLayer = this.get('serviceLayer');
       if (!serviceLayer) {
         let leafletMap = this.get('leafletMap');
@@ -416,17 +446,26 @@ export default EditMapController.extend(EditFormControllerOperationsIndicationMi
 
       this.set('polygonLayer', e.polygonLayer);
       this.set('bufferedMainPolygonLayer', e.bufferedMainPolygonLayer);
-      this.set('identifyResults', e.results);
+      this.set(`${operation}Results`, e.results);
+
+      let tabNumber;
+      switch (operation) {
+        case 'select':
+          tabNumber = '3';
+          break;
+        default:
+          tabNumber = '2';
+      }
 
       // Below is kind of madness, but if you want sidebar to move on identification finish - do that.
-      if (this.get('sidebar.2.active') !== true) {
-        this.set('sidebar.2.active', true);
+      if (this.get(`sidebar.${tabNumber}.active`) !== true) {
+        this.set(`sidebar.${tabNumber}.active`, true);
       }
 
       if (!this.get('sidebarOpened')) {
         this.send('toggleSidebar', {
           changed: false,
-          tabName: 'identify'
+          tabName: operation
         });
       }
     },
@@ -434,10 +473,12 @@ export default EditMapController.extend(EditFormControllerOperationsIndicationMi
     /**
       Clears identification results.
 
-      @method actions.clearSearch
+      @method actions.clearIdentification
+      @param {String} operationType Identification operation.
     */
-    clearIdentification() {
-      this.set('identifyResults', null);
+    clearIdentification(operationType) {
+      let operation = operationType || 'identify';
+      this.set(`${operation}Results`, null);
 
       let serviceLayer = this.get('serviceLayer');
       if (serviceLayer) {
@@ -454,7 +495,6 @@ export default EditMapController.extend(EditFormControllerOperationsIndicationMi
       if (bufferedMainPolygon) {
         bufferedMainPolygon.remove();
       }
-
     }
   }
 });

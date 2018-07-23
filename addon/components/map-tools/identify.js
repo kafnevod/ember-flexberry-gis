@@ -197,7 +197,7 @@ let IdentifyMapToolComponent = Ember.Component.extend({
     }
 
     if (!toolMode) {
-      this.set('toolMode', 'rectangle');
+      this.set('toolMode', 'marker');
     }
   }
 

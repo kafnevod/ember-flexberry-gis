@@ -4,6 +4,7 @@ export default {
   'searchbuttontooltip': 'Show search',
   'bookmarksbuttontooltip': 'Spatial bookmarks',
   'identifybuttontooltip': 'Show identification',
+  'selectbuttontooltip': 'Show select',
 
   'tabbar': {
     'treeview': {
@@ -14,6 +15,9 @@ export default {
     },
     'identify': {
       'caption': 'Identify'
+    },
+    'select': {
+      'caption': 'Select'
     },
     'bookmarks': {
       'caption': 'Spatial bookmarks'

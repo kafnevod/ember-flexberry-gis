@@ -120,14 +120,32 @@
           layerMode=identifyLayersOption
           toolMode=identifyToolOption
           onBufferSet=(action "onBufferSet")
-          identificationFinished=(action 'onIdentificationFinished')
-          clear=(action 'clearIdentification')
+          identificationFinished=(action 'onIdentificationFinished' 'identify')
+          clear=(action 'clearIdentification' 'identify')
         }}
         {{layer-result-list
           results=identifyResults
           serviceLayer=serviceLayer
           featureSelected=(action 'onLayerFeatureSelected')
           leafletMap=leafletMap
+          operationType='identify'
+        }}
+      </div>
+      <div data-tab="select" class="ui tab select">
+        <h3>{{t "forms.map.tabbar.select.caption"}}</h3>
+        {{flexberry-select-panel
+          leafletMap=leafletMap
+          toolMode=selectToolOption
+          onBufferSet=(action "onBufferSet")
+          selectFinished=(action 'onIdentificationFinished' 'select')
+          clear=(action 'clearIdentification' 'select')
+        }}
+        {{layer-result-list
+          results=selectResults
+          serviceLayer=serviceLayer
+          featureSelected=(action 'onLayerFeatureSelected')
+          leafletMap=leafletMap
+          operationType='select'
         }}
       </div>
       <div data-tab="bookmarks" class="ui tab bookmarks">
@@ -175,9 +193,17 @@
           activate=(action "onMapToolActivate" target=mapToolbar)
           bufferActive=bufferActive
           bufferUnits=bufferUnits
-          bufferRadius=bufferRadius          
+          bufferRadius=bufferRadius
           layerMode=identifyLayersOption
           toolMode=identifyToolOption
+          leafletMap=leafletMap
+        }}
+        {{map-tools/select
+          activate=(action "onMapToolActivate" target=mapToolbar)
+          bufferActive=bufferActive
+          bufferUnits=bufferUnits
+          bufferRadius=bufferRadius
+          toolMode=selectToolOption
           leafletMap=leafletMap
         }}
         {{map-commands/go-to
