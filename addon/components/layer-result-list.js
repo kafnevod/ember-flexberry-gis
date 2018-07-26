@@ -17,6 +17,13 @@ const isMapLimitKey = 'GISLinked';
   @extends <a href="http://emberjs.com/api/classes/Ember.Component.html">Ember.Component</a>
  */
 export default Ember.Component.extend(LeafletZoomToFeatureMixin, {
+  /**
+    Reference to 'layers-styles-renderer' servie.
+
+    @property layersStylesRenderer
+    @type LayersStylesRendererService
+  */
+  layersStylesRenderer: Ember.inject.service('layers-styles-renderer'),
 
   /**
     Component's wrapping <div> CSS-classes names.
@@ -120,6 +127,15 @@ export default Ember.Component.extend(LeafletZoomToFeatureMixin, {
    */
   _linksExpanded: false,
 
+  /**
+    Flag: indicates when confirm save dialog is canceled.
+
+    @property _isCanceled
+    @type boolean
+    @default false
+  */
+  _isCanceled: true,
+
   actions: {
     /**
       Show\hide links list (if present).
@@ -132,32 +148,11 @@ export default Ember.Component.extend(LeafletZoomToFeatureMixin, {
     /**
       Save changes in specified layer.
 
-      @method saveChanges
+      @method onSaveChanges
       @param {Object} layer Changed layer.
     */
-    saveChanges(layer) {
-      if (!layer._wasChanged) {
-        return;
-      }
-
-      let leafletObject = Ember.get(layer || {}, 'layerModel._leafletObject');
-      let saveFailed = (data) => {
-        this.set('error', data);
-        leafletObject.off('save:success', saveSuccess);
-      };
-
-      let saveSuccess = (data) => {
-        Ember.set(layer, '_wasChanged', false);
-        layer.features.forEach((feature) => {
-          Ember.set(feature, '_wasChanged', false);
-        });
-
-        leafletObject.off('save:failed', saveFailed);
-      };
-
-      leafletObject.once('save:failed', saveFailed);
-      leafletObject.once('save:success', saveSuccess);
-      leafletObject.save();
+    onSaveChanges(layer) {
+      this._saveChanges(layer);
     },
 
     /**
@@ -171,7 +166,221 @@ export default Ember.Component.extend(LeafletZoomToFeatureMixin, {
       Ember.set(layer, '_wasChanged', true);
       let leafletObject = Ember.get(layer || {}, 'layerModel._leafletObject');
       leafletObject.editLayer(e.layer || e.target);
+    },
+
+    /**
+      Handles save dialog approve action.
+
+      @method onSaveDialogApprove
+    */
+    onSaveDialogApprove() {
+      this.set('_isCanceled', false);
+      let displayResults = this.get('_displayResults');
+      if (displayResults instanceof Array) {
+        let promises = [];
+        displayResults.forEach((result) => {
+          promises.push(this._saveChanges(result));
+        }, this);
+
+        Ember.RSVP.allSettled(promises).finally(() => {
+          let leafletMap = this.get('leafletMap');
+          let identifyOptions = this.get('_identifyOptions') || {};
+          if (identifyOptions.isClearing) {
+            leafletMap.fire('flexberry-map:identify-clear-start', identifyOptions);
+          } else {
+            leafletMap.fire('flexberry-map:identify-start', identifyOptions);
+          }
+        });
+      }
+    },
+
+    /**
+      Handles save dialog deny action.
+
+      @method onSaveDialogDeny
+    */
+    onSaveDialogDeny() {
+      this.set('_isCanceled', false);
+      this._undoChanges();
+      let leafletMap = this.get('leafletMap');
+      let identifyOptions = this.get('_identifyOptions') || {};
+      if (identifyOptions.isClearing) {
+        leafletMap.fire('flexberry-map:identify-clear-start', identifyOptions);
+      } else {
+        leafletMap.fire('flexberry-map:identify-start', identifyOptions);
+      }
+    },
+
+    /**
+      Handles save dialog hide action.
+
+      @method onSaveDialogHide
+    */
+    onSaveDialogHide() {
+      if (this.get('_isCanceled')) {
+        let leafletMap = this.get('leafletMap');
+        leafletMap.setLoaderContent('');
+        leafletMap.hideLoader();
+        let identifyLayer = this.get('_identifyOptions.polygonLayer');
+        let identifyBufferedLayer = this.get('_identifyOptions.bufferedMainPolygonLayer');
+        if (identifyLayer) {
+          identifyLayer.disableEdit();
+          identifyLayer.remove();
+        }
+
+        if (identifyBufferedLayer) {
+          identifyLayer.disableEdit();
+          identifyBufferedLayer.remove();
+        }
+      }
+
+      this.set('_isCanceled', true);
     }
+  },
+
+  /**
+    Observes leafletMap changes.
+
+    @method _leafletMapObserver
+    @private
+  */
+  _leafletMapObserver: Ember.on('init', Ember.observer('leafletMap', function() {
+    let leafletMap = this.get('leafletMap');
+    if (Ember.isNone(leafletMap) || this.get('operationType') !== 'select') {
+      return;
+    }
+
+    leafletMap.off('flexberry-map:identify-clear-before', this._beforeClearIdentification, this);
+    leafletMap.on('flexberry-map:identify-clear-before', this._beforeClearIdentification, this);
+
+    leafletMap.off('flexberry-map:identify-before', this._beforeIdentification, this);
+    leafletMap.on('flexberry-map:identify-before', this._beforeIdentification, this);
+  })),
+
+  /**
+    Undoing changes to layer's objects.
+
+    @method _undoChanges
+    @private
+  */
+  _undoChanges() {
+    let displayResults = this.get('_displayResults');
+    if (!(displayResults instanceof Array)) {
+      return;
+    }
+
+    let layerModels = displayResults.map((result) => Ember.get(result, 'layerModel'));
+    layerModels.forEach((layerModel) => {
+      let layer = layerModel.get('_leafletObject');
+      if (layer.changes && Object.keys(layer.changes).length > 0) {
+        let changedIds = [];
+        Object.keys(layer.changes).forEach((key) => {
+          let change = layer.changes[key];
+          changedIds.push(change.feature.id);
+          layer.removeLayer(change);
+        });
+
+        let layersStylesRenderer = this.get('layersStylesRenderer');
+        if (changedIds.length > 0) {
+          layer.once('load', function () {
+            layer.changes = {};
+            let styleSettings = JSON.parse(layerModel.get('settings')).styleSettings;
+            layer.eachLayer((feature) => {
+              if (changedIds.indexOf(feature.feature.id) > -1) {
+                layersStylesRenderer.renderOnLeafletLayer({ leafletLayer: feature, styleSettings: styleSettings });
+              }
+            });
+          });
+
+          layer.loadFeatures(changedIds.map((id) => new L.Filter.GmlObjectID(id)));
+        }
+      }
+    }, this);
+  },
+
+  /**
+    Handles 'flexberry-map:identify-before' action.
+
+    @method _beforeIdentification
+    @param {Object} options Identification options.
+    @private
+  */
+  _beforeIdentification(options) {
+    let leafletMap = this.get('leafletMap');
+    this.set('_identifyOptions', options);
+    let displayResults = this.get('_displayResults');
+    let hasChanges = false;
+    if (displayResults instanceof Array) {
+      let changed = displayResults.find((result) => result._wasChanged);
+      hasChanges = !Ember.isNone(changed);
+    }
+
+    if (hasChanges) {
+      this.set('_saveDialogHasBeenRequested', true);
+      this.set('_saveDialogVisibility', true);
+    } else {
+      leafletMap.fire('flexberry-map:identify-start', options);
+    }
+  },
+
+  /**
+    Handles 'flexberry-map:identify-clear-before' action.
+
+    @method _beforeClearIdentification
+    @param {String} options Identify clear options.
+    @private
+  */
+  _beforeClearIdentification(options) {
+    let leafletMap = this.get('leafletMap');
+    this.set('_identifyOptions', options);
+    let displayResults = this.get('_displayResults');
+    let hasChanges = false;
+    if (displayResults instanceof Array) {
+      let changed = displayResults.find((result) => result._wasChanged);
+      hasChanges = !Ember.isNone(changed);
+    }
+
+    if (hasChanges) {
+      this.set('_saveDialogHasBeenRequested', true);
+      this.set('_saveDialogVisibility', true);
+    } else {
+      leafletMap.fire('flexberry-map:identify-clear-start', options);
+    }
+  },
+
+  /**
+    Saving changes for specified layer.
+
+    @method _saveChanges
+    @param {Object} layer Layer whose changes will be saved.
+    @private
+  */
+  _saveChanges(layer) {
+    return new Ember.RSVP.Promise((resolve, reject) => {
+      if (!layer._wasChanged) {
+        resolve();
+      }
+
+      let leafletObject = Ember.get(layer || {}, 'layerModel._leafletObject');
+      let saveFailed = (data) => {
+        leafletObject.off('save:success', saveSuccess);
+        reject(data);
+      };
+
+      let saveSuccess = (data) => {
+        Ember.set(layer, '_wasChanged', false);
+        layer.features.forEach((feature) => {
+          Ember.set(feature, '_wasChanged', false);
+        });
+
+        leafletObject.off('save:failed', saveFailed);
+        resolve(data);
+      };
+
+      leafletObject.once('save:failed', saveFailed);
+      leafletObject.once('save:success', saveSuccess);
+      leafletObject.save();
+    });
   },
 
   /**

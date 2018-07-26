@@ -119,6 +119,28 @@ export default BaseNonclickableMapTool.extend({
   },
 
   /**
+    Prepares for identification or cancels it.
+
+    @method _beforeIdentification
+    @param {Object} options Method options.
+    @param {<a href="http://leafletjs.com/reference-1.0.0.html#latlng">L.LatLng</a>} e.latlng Center of the polygon layer.
+    @param {<a href="http://leafletjs.com/reference.html#polygon">L.Polygon</a>} options.polygonLayer Polygon layer related to given area.
+    @param {Object[]} options.excludedLayers Layers excluded from identification.
+    @private
+  */
+  _beforeIdentification(options) {
+    let leafletMap = this.get('leafletMap');
+    leafletMap.off('flexberry-map:identify-start');
+
+    if (leafletMap.hasEventListeners('flexberry-map:identify-before')) {
+      leafletMap.on('flexberry-map:identify-start', this._startIdentification, this);
+      leafletMap.fire('flexberry-map:identify-before', options);
+    } else {
+      this._startIdentification(options);
+    }
+  },
+
+  /**
     Starts identification by array of satisfying layers inside given polygon area.
 
     @method _startIdentification
@@ -135,6 +157,7 @@ export default BaseNonclickableMapTool.extend({
     excludedLayers
   }) {
     let leafletMap = this.get('leafletMap');
+    leafletMap.off('flexberry-map:identify-start');
 
     let e = {
       latlng: latlng,
@@ -257,9 +280,8 @@ export default BaseNonclickableMapTool.extend({
 
     let latlng;
     let boundingBox;
-    let workingPolygonType = workingPolygon.toGeoJSON().geometry.type;
 
-    if (workingPolygonType !== 'Point') {
+    if (workingPolygon.getCenter) {
       latlng = workingPolygon.getCenter();
       boundingBox = workingPolygon.getBounds();
       if (boundingBox.getSouthWest().equals(boundingBox.getNorthEast())) {
@@ -279,7 +301,7 @@ export default BaseNonclickableMapTool.extend({
         workingPolygon.setLatLngs([boundingBox.getNorthWest(), boundingBox.getNorthEast(), boundingBox.getSouthEast(), boundingBox.getSouthWest()]);
       }
     } else {
-      latlng = workingPolygon._latLngs;
+      latlng = workingPolygon.getLatLng();
     }
 
     // Remove previously drawn rectangle
@@ -294,7 +316,7 @@ export default BaseNonclickableMapTool.extend({
     leafletMap.showLoader();
 
     // Start identification.
-    this._startIdentification({
+    this._beforeIdentification({
       polygonLayer: workingPolygon,
       bufferedMainPolygonLayer: bufferedMainPolygon,
       latlng: latlng

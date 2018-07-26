@@ -15,7 +15,8 @@
 .ui.modal.flexberry-geometry-add-mode-import-result,
 .ui.modal.flexberry-export-map-command-dialog,
 .ui.modal.flexberry-search-map-command-dialog,
-.ui.modal.flexberry-go-to-map-command-dialog {
+.ui.modal.flexberry-go-to-map-command-dialog,
+.ui.modal.layer-result-list-confirm-dialog {
 
     .content {
         overflow: auto;

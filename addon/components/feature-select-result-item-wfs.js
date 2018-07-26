@@ -183,7 +183,7 @@ export default Ember.Component.extend({
   */
   _findBindedLayer() {
     let bindedLayer = this.get('_bindedLayer');
-    if (bindedLayer) {
+    if (bindedLayer && bindedLayer._map) {
       return bindedLayer;
     }
 
@@ -264,9 +264,23 @@ export default Ember.Component.extend({
 
       let editTools = this._getEditTools(leafletMap);
       Ember.set(leafletMap, 'editTools', editTools);
+      let isMarker = layer instanceof L.Marker;
 
-      if (!layer.editEnabled()) {
+      if (layer.editEnabled() || (isMarker && layer.dragEnabled())) {
+        if (!isMarker) {
+          layer.disableEdit();
+          layer.disableSnap();
+          layer.off('editable:editing', this._triggerChanged, this);
+        }
+
+        layer.disableDrag();
+        layer.off('dragend', this._triggerChanged, this);
+        if (this.get('_isAdded')) {
+          leafletMap.removeLayer(layer);
+        }
+      } else {
         leafletMap.fire('flexberry-map:switchToDefaultMapTool');
+
         // If the layer is not on the map - add it
         if (!leafletMap.hasLayer(layer)) {
           this.set('_isAdded', true);
@@ -278,7 +292,7 @@ export default Ember.Component.extend({
 
         this.set('_saveDragState', true);
         layer.enableDrag();
-        if (!(layer instanceof L.Marker)) {
+        if (!isMarker) {
           layer.enableEdit(leafletMap);
           layer.on('editable:editing', this._triggerChanged, this);
           let leafletObject = this.get('feature.layerModel._leafletObject') || {};
@@ -287,16 +301,6 @@ export default Ember.Component.extend({
         }
 
         layer.on('drag:dragend', this._triggerChanged, this);
-      } else {
-        layer.disableEdit();
-        layer.disableSnap();
-        layer.disableDrag();
-        layer.off('dragend', this._triggerChanged, this);
-        layer.off('editable:editing', this._triggerChanged, this);
-
-        if (this.get('_isAdded')) {
-          leafletMap.removeLayer(layer);
-        }
       }
     },
   },

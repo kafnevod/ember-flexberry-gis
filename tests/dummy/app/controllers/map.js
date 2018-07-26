@@ -478,23 +478,43 @@ export default EditMapController.extend(EditFormControllerOperationsIndicationMi
     */
     clearIdentification(operationType) {
       let operation = operationType || 'identify';
-      this.set(`${operation}Results`, null);
+      let leafletMap = this.get('leafletMap');
+      leafletMap.off(`flexberry-map:identify-clear-start`);
 
-      let serviceLayer = this.get('serviceLayer');
-      if (serviceLayer) {
-        serviceLayer.clearLayers();
+      if (operation === 'select' && leafletMap.hasEventListeners(`flexberry-map:identify-clear-before`)) {
+        leafletMap.on(`flexberry-map:identify-clear-start`, this._clearIdentification, this);
+        leafletMap.fire(`flexberry-map:identify-clear-before`, { operationType: operation, isClearing: true });
+      } else {
+        this._clearIdentification({ operationType: operation });
       }
+    }
+  },
 
-      let polygonLayer = this.get('polygonLayer');
-      if (polygonLayer) {
-        polygonLayer.disableEdit();
-        polygonLayer.remove();
-      }
+  /**
+    Handles flexberry-map:identify-clear-start action.
 
-      let bufferedMainPolygon = this.get('bufferedMainPolygonLayer');
-      if (bufferedMainPolygon) {
-        bufferedMainPolygon.remove();
-      }
+    @method _clearIdentification
+    @param {String} options Identification clear options.
+    @private
+  */
+  _clearIdentification(options) {
+    let operation = options.operationType || 'identify';
+    this.set(`${operation}Results`, null);
+
+    let serviceLayer = this.get('serviceLayer');
+    if (serviceLayer) {
+      serviceLayer.clearLayers();
+    }
+
+    let polygonLayer = this.get('polygonLayer');
+    if (polygonLayer) {
+      polygonLayer.disableEdit();
+      polygonLayer.remove();
+    }
+
+    let bufferedMainPolygon = this.get('bufferedMainPolygonLayer');
+    if (bufferedMainPolygon) {
+      bufferedMainPolygon.remove();
     }
   }
 });

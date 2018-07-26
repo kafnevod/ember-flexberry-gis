@@ -13,7 +13,7 @@
     {{#if result.editable}}
       <a class="feature-result-save icon item"
         title="{{t "components.feature-result-item.save-changes-caption"}}"
-        {{action "saveChanges" result}}>
+        {{action "onSaveChanges" result}}>
         <i class="save icon{{unless result._wasChanged " disabled"}}"></i>
       </a>
     {{/if}}
@@ -72,3 +72,16 @@
       {{/flexberry-toggler}}
   </div>
 {{/each}}
+{{#if _saveDialogHasBeenRequested}}
+  {{flexberry-dialog
+    class="layer-result-list-confirm-dialog"
+    caption=(t "components.layer-result-list.save-confirm-dialog.caption")
+    content=(t "components.layer-result-list.save-confirm-dialog.content")
+    approveButtonCaption=(t "components.layer-result-list.save-confirm-dialog.approve-caption")
+    denyButtonCaption=(t "components.layer-result-list.save-confirm-dialog.deny-caption")
+    visible=_saveDialogVisibility
+    approve=(action "onSaveDialogApprove")
+    deny=(action "onSaveDialogDeny")
+    hide=(action "onSaveDialogHide")
+  }}
+{{/if}}
