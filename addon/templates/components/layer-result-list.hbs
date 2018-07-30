@@ -54,6 +54,7 @@
               panTo=(action "panTo")
               zoomTo=(action "zoomTo")
               triggerChanged=(action "triggerChanged" result)
+              editProperties=(action "editProperties" result)
             }}
           {{else}}
             {{feature-result-item
@@ -83,5 +84,16 @@
     approve=(action "onSaveDialogApprove")
     deny=(action "onSaveDialogDeny")
     hide=(action "onSaveDialogHide")
+  }}
+{{/if}}
+{{#if _editDialogHasBeenRequested}}
+  {{component "layers-dialogs/attributes/edit"
+    visible=_onEditDialogIsVisible
+    fieldNames=(get _editDialogParams "header")
+    fieldTypes=(get _editDialogParams "fieldTypes")
+    fieldParsers=(get _editDialogParams "fields")
+    fieldValidators=(get _editDialogParams "fieldValidators")
+    data=(get _editDialogParams "editData")
+    approve=(action "onEditDialogApprove")
   }}
 {{/if}}

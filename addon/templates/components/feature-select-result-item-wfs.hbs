@@ -1,7 +1,7 @@
 <div class="feature-result-item-title">
   <div class="feature-result-item-toolbar {{if (gt feature.editForms.length 1) "links" ""}}">
     <a class="icon item" title="{{t "components.feature-result-item.show-info-caption"}}" {{action "showInfo" on="click"}}>
-      <i class="caret {{if expanded 'down' 'right'}} icon"></i>
+      <i class="caret {{if infoExpanded 'down' 'right'}} icon"></i>
     </a>
     <a class="icon item" title="{{t "components.feature-result-item.zoom-to-caption"}}" {{action "zoomTo" on="click"}}>
       <i class="marker icon"></i>
@@ -9,7 +9,7 @@
     <a class="icon item" title="{{t "components.feature-result-item.pan-to-caption"}}" {{action "panTo" on="click"}}>
       <i class="hand paper icon"></i>
     </a>
-    <a class="icon item" title="{{t "components.flexberry-layers-attributes-panel.edit-item"}}" {{action "zoomTo" on="click"}}>
+    <a class="icon item" title="{{t "components.flexberry-layers-attributes-panel.edit-item"}}" {{action "editProperties" on="click"}}>
       <i class="edit icon"></i>
     </a>
     <a class="icon item" title="{{t "components.flexberry-layers-attributes-panel.edit-item-geometry"}}" {{action "geometryEdit" on="click"}}>
@@ -43,8 +43,8 @@
     {{get feature displayProperty}}
   </div>
 </div>
-<div class="feature-result-item-content content {{if expanded "visible" "hidden"}}">
-  {{#if expanded}}
+<div class="feature-result-item-content content {{if infoExpanded "visible" "hidden"}}">
+  {{#if infoExpanded}}
     <table class="ui compact celled table">
       <tr>
         <th>{{t "components.feature-result-item.feature-table-property-name"}}</th>

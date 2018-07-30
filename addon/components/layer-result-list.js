@@ -148,11 +148,55 @@ export default Ember.Component.extend(LeafletZoomToFeatureMixin, {
     /**
       Save changes in specified layer.
 
-      @method onSaveChanges
+      @method actions.onSaveChanges
       @param {Object} layer Changed layer.
     */
     onSaveChanges(layer) {
       this._saveChanges(layer);
+    },
+
+    /**
+      Handles edit properties button click.
+
+      @method actions.editProperties
+      @param {Object} layer Edited layer.
+      @param {Object} feature Edited feature.
+    */
+    editProperties(layer, feature) {
+      this.set('_editedLayer', layer);
+      let layerModel = Ember.get(feature, 'layerModel');
+
+      let getHeader = () => {
+        let result = {};
+        let locale = this.get('i18n.locale');
+        let featuresPropertiesSettings = Ember.get(layerModel, 'settingsAsObject.displaySettings.featuresPropertiesSettings');
+        let localizedProperties = Ember.get(featuresPropertiesSettings, `localizedProperties.${locale}`) || {};
+        let excludedProperties = Ember.get(featuresPropertiesSettings, `excludedProperties`);
+        excludedProperties = Ember.isArray(excludedProperties) ? Ember.A(excludedProperties) : Ember.A();
+
+        for (let propertyName in Ember.get(layerModel, '_leafletObject.readFormat.featureType.fields')) {
+          if (excludedProperties.contains(propertyName)) {
+            continue;
+          }
+
+          let propertyCaption = Ember.get(localizedProperties, propertyName);
+
+          result[propertyName] = !Ember.isBlank(propertyCaption) ? propertyCaption : propertyName;
+        }
+
+        return result;
+      };
+
+      this.set('_editDialogParams', {});
+      this.set('_editDialogParams.fieldTypes', Ember.get(layerModel, '_leafletObject.readFormat.featureType.fieldTypes'));
+      this.set('_editDialogParams.fields', Ember.get(layerModel, '_leafletObject.readFormat.featureType.fields'));
+      this.set('_editDialogParams.fieldValidators', Ember.get(layerModel, '_leafletObject.readFormat.featureType.fieldValidators'));
+      this.set('_editDialogParams.header', getHeader());
+      this.set('_editDialogParams.editData', Ember.get(feature, 'properties'));
+      this.set('_editDialogParams.feature', feature);
+
+      this.set('_editDialogHasBeenRequested', true);
+      this.set('_onEditDialogIsVisible', true);
     },
 
     /**
@@ -235,6 +279,29 @@ export default Ember.Component.extend(LeafletZoomToFeatureMixin, {
       }
 
       this.set('_isCanceled', true);
+    },
+
+    /**
+      Handles edit properties dialog approve.
+
+      @method actions.onEditDialogApprove
+      @param {Object} data Edited properties.
+    */
+    onEditDialogApprove(data) {
+      let editedLayer = this.get('_editDialogParams.feature.leafletLayer');
+      let changed = false;
+      for (let i in data) {
+        if (data.hasOwnProperty(i)) {
+          if (Ember.get(editedLayer, `feature.properties.${i}`) !== data[i]) {
+            Ember.set(editedLayer, `feature.properties.${i}`, data[i]);
+            changed = true;
+          }
+        }
+      }
+
+      if (changed) {
+        this.send('triggerChanged', this.get('_editedLayer'), { layer: editedLayer });
+      }
     }
   },
 

@@ -112,17 +112,6 @@ export default Ember.Component.extend({
   }),
 
   /**
-    Flag: indicates whether to display detailed feature info.
-
-    @property expanded
-    @type boolean
-    @readonly
-   */
-  expanded: Ember.computed('infoExpanded', '_infoExpanded', function () {
-    return this.get('infoExpanded') || this.get('_infoExpanded');
-  }),
-
-  /**
     Flag: indicates whether component is active.
 
     @property isActive
@@ -233,11 +222,20 @@ export default Ember.Component.extend({
     },
 
     /**
+      Invokes {{#crossLink "FeatureResultItemComponent/sendingActions.editProperties:method"}}'editProperties' action{{/crossLink}}.
+      @method actions.editProperties
+     */
+    editProperties() {
+      this.set('infoExpanded', false);
+      this.sendAction('editProperties', this.get('feature'), this._findBindedLayer());
+    },
+
+    /**
       Show\hide detailed feature info
       @method actions.showInfo
      */
     showInfo() {
-      this.set('_infoExpanded', !this.get('_infoExpanded'));
+      this.set('infoExpanded', !this.get('infoExpanded'));
       this.set('_linksExpanded', false);
     },
 
