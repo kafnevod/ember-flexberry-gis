@@ -300,7 +300,7 @@ L.SnapHandler = L.Handler.extend({
   */
   _drawClick(e) {
     let snapMarker = this.snapMarker;
-    let isSnap = snapMarker._map !== undefined;
+    let isSnap = !!snapMarker._map;
     if (isSnap) {
       let latlng = snapMarker.getLatLng();
       e.latlng.lat = latlng.lat;

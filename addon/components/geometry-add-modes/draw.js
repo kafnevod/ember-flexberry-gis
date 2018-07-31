@@ -105,6 +105,10 @@ let FlexberryGeometryAddModeDrawComponent = Ember.Component.extend({
 
   _disableDraw(e) {
     let editTools = this.get('_editTools');
+    let leafletMap = this.get('leafletMap');
+    if (leafletMap) {
+      leafletMap.disableDrawSnap();
+    }
 
     this.$().closest('body').off('keydown');
 
