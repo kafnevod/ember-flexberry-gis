@@ -1,0 +1,1 @@
+export { default } from 'ember-flexberry-gis/components/feature-select-result-item-wms-wfs';

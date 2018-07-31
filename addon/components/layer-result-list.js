@@ -352,11 +352,13 @@ export default Ember.Component.extend(LeafletZoomToFeatureMixin, {
           layer.once('load', function () {
             layer.changes = {};
             let styleSettings = JSON.parse(layerModel.get('settings')).styleSettings;
-            layer.eachLayer((feature) => {
-              if (changedIds.indexOf(feature.feature.id) > -1) {
-                layersStylesRenderer.renderOnLeafletLayer({ leafletLayer: feature, styleSettings: styleSettings });
-              }
-            });
+            if (!Ember.isNone(styleSettings)) {
+              layer.eachLayer((feature) => {
+                if (changedIds.indexOf(feature.feature.id) > -1) {
+                  layersStylesRenderer.renderOnLeafletLayer({ leafletLayer: feature, styleSettings: styleSettings });
+                }
+              });
+            }
           });
 
           layer.loadFeatures(changedIds.map((id) => new L.Filter.GmlObjectID(id)));

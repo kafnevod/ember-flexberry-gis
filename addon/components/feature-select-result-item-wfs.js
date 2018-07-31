@@ -8,7 +8,7 @@ import layout from '../templates/components/feature-select-result-item-wfs';
 /**
   Component for display GeoJSON feature object details from selecting results.
 
-  @class FeatureResultItemComponent
+  @class FeatureResultItemWfsComponent
   @extends <a href="http://emberjs.com/api/classes/Ember.Component.html">Ember.Component</a>
  */
 export default Ember.Component.extend({
@@ -63,18 +63,6 @@ export default Ember.Component.extend({
     @private
   */
   _bindedLayer: undefined,
-
-  /**
-    Feature's map.
-
-    @property leafletMap
-    @type Object
-    @readOnly
-   */
-  leafletMap: Ember.computed('_bindedLayer', function() {
-    let layer = this.get('_bindedLayer') || {};
-    return layer._map;
-  }),
 
   /**
     Property to represent feature.
@@ -258,7 +246,7 @@ export default Ember.Component.extend({
         return;
       }
 
-      let leafletMap = Ember.get(layer, '_map');
+      let leafletMap = this.get('leafletMap');
 
       let editTools = this._getEditTools(leafletMap);
       Ember.set(leafletMap, 'editTools', editTools);
@@ -273,9 +261,6 @@ export default Ember.Component.extend({
 
         layer.disableDrag();
         layer.off('dragend', this._triggerChanged, this);
-        if (this.get('_isAdded')) {
-          leafletMap.removeLayer(layer);
-        }
       } else {
         leafletMap.fire('flexberry-map:switchToDefaultMapTool');
 
@@ -315,6 +300,9 @@ export default Ember.Component.extend({
       bindedLayer.off('editable:editing', this._triggerChanged, this);
       bindedLayer.off('mousedown', this._dragOnMouseDown, this);
       bindedLayer.disableSnap();
+      if (this.get('_isAdded')) {
+        this.get('leafletMap').removeLayer(bindedLayer);
+      }
     }
   }
 

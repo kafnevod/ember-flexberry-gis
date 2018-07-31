@@ -46,6 +46,7 @@
           {{#if (known-for-type 'component' (concat 'feature-' operationType '-result-item-' result.layerModel.type))}}
             {{component (concat 'feature-' operationType '-result-item-' result.layerModel.type)
               feature=feature
+              leafletMap=leafletMap
               infoExpanded=(and (eq result.features.length 1) result.first)
               displayProperty="displayValue"
               displaySettings=result.settings
