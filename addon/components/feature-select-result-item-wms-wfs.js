@@ -2,7 +2,6 @@
   @module ember-flexberry-gis
 */
 
-import Ember from 'ember';
 import wmsWfsResultItem from './feature-select-result-item-wfs';
 
 /**
