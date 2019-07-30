@@ -23,6 +23,8 @@ module.exports = {
     // will append their vendor dependencies earlier in the vendor.js file, but some of them needs leaflet to be already imported.
     var appAssetsDirectory = '/assets';
     var appImagesDirectory = appAssetsDirectory + '/images';
+
+/*
     app.import(app.bowerDirectory + '/leaflet/dist/leaflet-src.js', {
       type: 'vendor',
       prepend: true
@@ -46,7 +48,7 @@ module.exports = {
     app.import(app.bowerDirectory + '/leaflet/dist/images/marker-shadow.png', {
       destDir: appImagesDirectory
     });
-
+ */
     // Import leaflet plugins.
 
 	  // leaflet-areaselect.
