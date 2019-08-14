@@ -5832,6 +5832,16 @@ ember-i18n@4.2.0:
     ember-cli-babel "^5.0.0"
     ember-getowner-polyfill "^1.0.0"
 
+ember-i18n@4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/ember-i18n/-/ember-i18n-4.3.2.tgz#8a0374ce0815045f47698304450e7cf0497b3a5f"
+  integrity sha1-igN0zggVBF9HaYMERQ588El7Ol8=
+  dependencies:
+    broccoli-funnel "^1.0.6"
+    ember-cli-babel "^5.0.0"
+    ember-cli-version-checker "^1.1.6"
+    ember-getowner-polyfill "^1.0.0"
+
 ember-inflector@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/ember-inflector/-/ember-inflector-3.0.1.tgz#04be6df4d7e4000f6d6bd70787cdc995f77be4ab"

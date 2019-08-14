@@ -32,7 +32,7 @@
     "leaflet": "^1.5.1",
     "ember-flexberry": "2.1.0",
     "ember-flexberry-data": "2.1.0",
-    "ember-i18n": "4.2.0",
+    "ember-i18n": "4.3.2",
     "ember-truth-helpers": "1.2.0",
     "ember-validations": "~2.0.0-alpha.4",
     "lodash": "^4.4.0",

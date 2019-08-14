@@ -7,12 +7,15 @@ module.exports = {
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly",
-		 "L": true
+		 "L": true,
+		 "leafletLayer": true
     },
     "parserOptions": {
         "ecmaVersion": 2018,
 		"sourceType": "module"
     },
     "rules": {
+		  "no-console": "off",
+		"no-unused-vars": 0
     }
 };
