@@ -108,26 +108,29 @@
         }}
         {{layer-result-list
           results=searchResults
-          featureSelected=(action 'onLayerFeatureSelected')
           serviceLayer=serviceLayer
           leafletMap=leafletMap
+          featureSelected=(action "onLayerFeatureSelected")
         }}
       </div>
       <div data-tab="identify" class="ui tab identify">
         <h3>{{t "forms.map.tabbar.identify.caption"}}</h3>
         {{flexberry-identify-panel
+          layerMode=identifyToolLayerMode
+          toolMode=identifyToolToolMode
+          bufferActive=identifyToolBufferActive
+          bufferUnits=identifyToolBufferUnits
+          bufferRadius=identifyToolBufferRadius
+          layers=model.hierarchy
           leafletMap=leafletMap
-          layerMode=identifyLayersOption
-          toolMode=identifyToolOption
-          onBufferSet=(action "onBufferSet")
-          identificationFinished=(action 'onIdentificationFinished')
-          clear=(action 'clearIdentification')
+          identificationFinished=(action "onIdentificationFinished")
+          identificationClear=(action "onIdentificationClear")
         }}
         {{layer-result-list
-          results=identifyResults
+          results=identifyToolResults
           serviceLayer=serviceLayer
-          featureSelected=(action 'onLayerFeatureSelected')
           leafletMap=leafletMap
+          featureSelected=(action "onLayerFeatureSelected")
         }}
       </div>
       <div data-tab="bookmarks" class="ui tab bookmarks">
@@ -143,11 +146,11 @@
     {{flexberry-layers-attributes-panel
       items=editedLayers
       serviceLayer=serviceLayer
-      leafletMap=leafletMap
       selectedTabIndex=editedLayersSelectedTabIndex
       folded=editedLayersPanelFolded
       settings=editedLayersPanelSettings
       loading=editedLayersPanelLoading
+      leafletMap=leafletMap
     }}
   </div>
   <div class="row">
@@ -163,17 +166,20 @@
           mapModel=model
           leafletMap=leafletMap
         }}
-        {{scale-control leafletMap=leafletMap imperial=false}}
+        {{scale-control
+          imperial=false
+          leafletMap=leafletMap
+        }}
         {{history-control leafletMap=leafletMap}}
         {{map-tools/drag leafletMap=leafletMap}}
         {{map-tools/zoom-in leafletMap=leafletMap}}
         {{map-tools/zoom-out leafletMap=leafletMap}}
         {{map-tools/identify
-          bufferActive=bufferActive
-          bufferUnits=bufferUnits
-          bufferRadius=bufferRadius
-          layerMode=identifyLayersOption
-          toolMode=identifyToolOption
+          layerMode=identifyToolLayerMode
+          toolMode=identifyToolToolMode
+          bufferActive=identifyToolBufferActive
+          bufferUnits=identifyToolBufferUnits
+          bufferRadius=identifyToolBufferRadius
           layers=model.hierarchy
           leafletMap=leafletMap
         }}
