@@ -53,7 +53,7 @@ export default SearchMapCommand.extend({
 
       // Return received features or features promise.
       resolve(e.results);
-      });
+    });
 
   }
 });
