@@ -265,7 +265,7 @@ let ExportMapCommandComponent = Ember.Component.extend({
         this.set('_command', 'export-download');
         this._showExportDialog({ isDownloadDialog: true, executeActionEventObject: e });
       },
-    
+
       /**
         Handles {{#crossLink "BaseMapCommandComponent/sendingActions.execute:method"}}base map-command's 'execute' action{{/crossLink}}.
 
